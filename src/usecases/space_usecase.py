@@ -164,9 +164,11 @@ class SpaceUseCase:
         date_start = datetime.combine(check_date.date(), datetime.min.time())
         date_end = datetime.combine(check_date.date(), datetime.max.time())
         
+        # Hanya booking dengan status active dan checkin yang block availability
+        # cancelled dan finished tidak mempengaruhi availability
         bookings = Booking.query.filter(
             Booking.space_id == space.id,
-            Booking.status.in_(['active', 'confirmed']),
+            Booking.status.in_(['active', 'checkin']),
             Booking.start_at >= date_start,
             Booking.start_at < date_end
         ).all()

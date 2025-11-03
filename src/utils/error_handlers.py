@@ -14,28 +14,28 @@ def register_error_handlers(app: Flask):
     def bad_request_error(error):
         """Handle 400 Bad Request"""
         return ResponseTemplate.bad_request(
-            error=str(error) if str(error) != "400 Bad Request: " else "Bad request"
+            message=str(error) if str(error) != "400 Bad Request: " else "Bad request"
         )
     
     @app.errorhandler(401)
     def unauthorized_error(error):
         """Handle 401 Unauthorized"""
         return ResponseTemplate.unauthorized(
-            error=str(error) if str(error) != "401 Unauthorized: " else "Unauthorized access"
+            message=str(error) if str(error) != "401 Unauthorized: " else "Unauthorized access"
         )
     
     @app.errorhandler(403)
     def forbidden_error(error):
         """Handle 403 Forbidden"""
         return ResponseTemplate.forbidden(
-            error=str(error) if str(error) != "403 Forbidden: " else "Access forbidden"
+            message=str(error) if str(error) != "403 Forbidden: " else "Access forbidden"
         )
     
     @app.errorhandler(404)
     def not_found_error(error):
         """Handle 404 Not Found"""
         return ResponseTemplate.not_found(
-            error="Endpoint not found",
+            message="Endpoint not found",
             resource=f"'{request.path}'"
         )
     
@@ -44,7 +44,7 @@ def register_error_handlers(app: Flask):
         """Handle 405 Method Not Allowed"""
         return jsonify({
             'success': False,
-            'error': f"Method {request.method} not allowed for this endpoint",
+            'message': f"Method {request.method} not allowed for this endpoint",
             'status_code': 405,
             'allowed_methods': error.valid_methods if hasattr(error, 'valid_methods') else []
         }), 405
@@ -54,9 +54,9 @@ def register_error_handlers(app: Flask):
         """Handle 422 Validation Error"""
         return jsonify({
             'success': False,
-            'error': 'Validation failed',
+            'message': 'Validation failed',
             'status_code': 422,
-            'message': str(error)
+            'details': str(error)
         }), 422
     
     @app.errorhandler(500)
@@ -64,7 +64,7 @@ def register_error_handlers(app: Flask):
         """Handle 500 Internal Server Error"""
         app.logger.error(f'Internal Server Error: {str(error)}')
         return ResponseTemplate.internal_error(
-            error="Internal server error",
+            message="Internal server error",
             details=str(error) if app.debug else None
         )
     
@@ -73,7 +73,7 @@ def register_error_handlers(app: Flask):
         """Handle Database errors"""
         app.logger.error(f'Database Error: {str(error)}')
         return ResponseTemplate.internal_error(
-            error="Database error occurred",
+            message="Database error occurred",
             details=str(error) if app.debug else None
         )
     
@@ -89,7 +89,7 @@ def register_error_handlers(app: Flask):
         
         # Return 500 error
         return ResponseTemplate.internal_error(
-            error="An unexpected error occurred",
+            message="An unexpected error occurred",
             details=str(error) if app.debug else None
         )
     

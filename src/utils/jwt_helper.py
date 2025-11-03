@@ -49,13 +49,15 @@ def token_required(f):
             except IndexError:
                 return jsonify({
                     'success': False,
-                    'error': 'Invalid token format. Use: Bearer <token>'
+                    'message': 'Invalid token format. Use: Bearer <token>',
+                    'status_code': 401
                 }), 401
         
         if not token:
             return jsonify({
                 'success': False,
-                'error': 'Token is missing'
+                'message': 'Token is missing',
+                'status_code': 401
             }), 401
         
         # Decode token
@@ -64,7 +66,8 @@ def token_required(f):
         if payload is None:
             return jsonify({
                 'success': False,
-                'error': 'Token is invalid or expired'
+                'message': 'Token is invalid or expired',
+                'status_code': 401
             }), 401
         
         # Pass user info to route
@@ -83,7 +86,8 @@ def role_required(allowed_roles: list):
             if not hasattr(request, 'current_user'):
                 return jsonify({
                     'success': False,
-                    'error': 'Authentication required'
+                    'message': 'Authentication required',
+                    'status_code': 401
                 }), 401
             
             user_role = request.current_user.get('role')
@@ -91,7 +95,8 @@ def role_required(allowed_roles: list):
             if user_role not in allowed_roles:
                 return jsonify({
                     'success': False,
-                    'error': 'Access forbidden. Insufficient permissions.'
+                    'message': 'Access forbidden. Insufficient permissions.',
+                    'status_code': 403
                 }), 403
             
             return f(*args, **kwargs)

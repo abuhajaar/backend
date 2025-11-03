@@ -27,15 +27,21 @@ class Booking(db.Model):
     
     def to_dict(self):
         """Convert booking object to dictionary"""
+        # Format date dan time dari start_at dan end_at
+        date = self.start_at.strftime('%Y-%m-%d') if self.start_at else None
+        start_time = self.start_at.strftime('%H:%M') if self.start_at else None
+        end_time = self.end_at.strftime('%H:%M') if self.end_at else None
+        
         return {
             'id': self.id,
             'user_id': self.user_id,
             'space_id': self.space_id,
+            'space_name': self.space.name if self.space else 'Unknown',
+            'space_type': self.space.type if self.space else 'Unknown',
+            'date': date,
+            'start_time': start_time,
+            'end_time': end_time,
             'status': self.status,
-            'start_at': self.start_at.isoformat() if self.start_at else None,
-            'end_at': self.end_at.isoformat() if self.end_at else None,
-            'buffer_min_snapshot': self.buffer_min_snapshot,
-            'max_duration_snapshot': self.max_duration_snapshot,
             'checkin_code': self.checkin_code,
             'code_valid_from': self.code_valid_from.isoformat() if self.code_valid_from else None,
             'code_valid_to': self.code_valid_to.isoformat() if self.code_valid_to else None,
