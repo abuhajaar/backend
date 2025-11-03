@@ -1,0 +1,38 @@
+# Coolify Configuration for OpenBO Backend
+
+# Service Definition
+services:
+  backend:
+    type: dockerfile
+    dockerfile: Dockerfile
+    port: 5000
+    healthcheck:
+      url: /api/health
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+# Build Configuration
+build:
+  context: .
+  dockerfile: Dockerfile
+
+# Deployment Configuration
+deployment:
+  branch: main
+  auto_deploy: true
+  
+# Resource Limits (optional)
+resources:
+  limits:
+    cpus: '1'
+    memory: 1G
+  reservations:
+    cpus: '0.5'
+    memory: 512M

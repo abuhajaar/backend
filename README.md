@@ -375,6 +375,8 @@ A Flask-based REST API backend with MariaDB database integration using Clean Arc
 
 ## Running the Application
 
+### Option 1: Local Development
+
 1. Make sure MariaDB is running
 2. Activate the virtual environment (if not already activated)
 3. Run the Flask application:
@@ -383,6 +385,46 @@ A Flask-based REST API backend with MariaDB database integration using Clean Arc
    ```
 
 The server will start at `http://localhost:5000`
+
+### Option 2: Docker (Recommended)
+
+See [DOCKER.md](DOCKER.md) for detailed Docker setup guide.
+
+**Quick Start:**
+
+```powershell
+# Build and start all services (Flask + MariaDB)
+docker-compose up --build
+
+# Or run in background
+docker-compose up -d --build
+```
+
+**Access:**
+- API: http://localhost:5000
+- Database: localhost:3306
+
+**Stop:**
+```powershell
+docker-compose down
+```
+
+For more Docker commands and troubleshooting, see [DOCKER.md](DOCKER.md).
+
+### Option 3: Coolify Deployment (Production)
+
+See [COOLIFY.md](COOLIFY.md) for detailed Coolify deployment guide.
+
+**Pre-deployment checklist:** [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
+
+**Quick Deploy:**
+1. Connect Git repository to Coolify
+2. Set environment variables in Coolify UI
+3. Deploy
+4. Run migrations via Coolify shell
+5. Done!
+
+For complete guide, see [COOLIFY.md](COOLIFY.md).
 
 ## API Endpoints
 

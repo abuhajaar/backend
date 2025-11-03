@@ -36,6 +36,7 @@ class StatsRepository:
     def get_upcoming_bookings_count(user_id):
         """
         Get jumlah booking besok dan seterusnya untuk user
+        Hanya booking dengan status active
         Args:
             user_id: ID of the user
         Returns: int count
@@ -44,7 +45,8 @@ class StatsRepository:
         
         count = Booking.query.filter(
             Booking.user_id == user_id,
-            Booking.start_at >= tomorrow_start
+            Booking.start_at >= tomorrow_start,
+            Booking.status == 'active'
         ).count()
         
         return count

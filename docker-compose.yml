@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  # MariaDB Database
+  db:
+    image: mariadb:11.2
+    container_name: openbo_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: openbo_db
+      MYSQL_USER: openbo_user
+      MYSQL_PASSWORD: openbo_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - openbo_network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend Application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openbo_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      # Database configuration
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: openbo_db
+      DB_USER: openbo_user
+      DB_PASSWORD: openbo_pass
+
+      # Flask configuration
+      FLASK_ENV: production
+      SECRET_KEY: your-secret-key-change-this-in-production
+
+      # Database URL
+      DATABASE_URL: mysql+pymysql://openbo_user:openbo_pass@db:3306/openbo_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - openbo_network
+    volumes:
+      - ./logs:/app/logs
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 10 &&
+        echo 'Running migrations...' &&
+        python migrate.py &&
+        echo 'Seeding database...' &&
+        python seed.py &&
+        echo 'Starting application...' &&
+        python run.py
+      "
+
+networks:
+  openbo_network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
