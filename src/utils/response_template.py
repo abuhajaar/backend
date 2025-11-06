@@ -1,12 +1,8 @@
-"""
-Response templates untuk standardisasi HTTP responses
-"""
-
 from flask import jsonify
 from typing import Any, Dict, Optional
 
 class ResponseTemplate:
-    """Class untuk membuat standardized HTTP responses"""
+    """Class for creating standardized HTTP responses"""
     
     @staticmethod
     def success(data: Any = None, message: str = "Success", status_code: int = 200):

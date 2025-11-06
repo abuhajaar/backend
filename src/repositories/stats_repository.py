@@ -1,7 +1,3 @@
-"""
-Repository untuk Statistics
-Menghandle data access layer untuk Statistics
-"""
 from datetime import datetime, timedelta
 from sqlalchemy import func, and_
 from src.models.booking import Booking
@@ -9,17 +5,12 @@ from src.models.space import Space
 from src.config.database import db
 
 class StatsRepository:
-    """Repository untuk operasi database Statistics"""
+    """Repository for Statistics operations"""
     
     @staticmethod
     def get_today_bookings_count(user_id):
-        """
-        Get jumlah booking hari ini untuk user
-        Hanya booking dengan status active dan checkin
-        Args:
-            user_id: ID of the user
-        Returns: int count
-        """
+        """Get today's booking count for a user
+        Only bookings with active and checkin status"""
         today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         today_end = today_start + timedelta(days=1)
         
@@ -34,13 +25,7 @@ class StatsRepository:
     
     @staticmethod
     def get_upcoming_bookings_count(user_id):
-        """
-        Get jumlah booking besok dan seterusnya untuk user
-        Hanya booking dengan status active
-        Args:
-            user_id: ID of the user
-        Returns: int count
-        """
+        """Get upcoming bookings count for a user with active status"""
         tomorrow_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
         
         count = Booking.query.filter(
@@ -53,18 +38,13 @@ class StatsRepository:
     
     @staticmethod
     def get_weekly_booking_hours(user_id):
-        """
-        Get total jam booking per minggu (berdasarkan checkin_at dan checkout_at)
-        Args:
-            user_id: ID of the user
-        Returns: float total hours
-        """
+        """Get total hours of bookings for the current week"""
         # Get start of current week (Monday)
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         week_start = today - timedelta(days=today.weekday())
         week_end = week_start + timedelta(days=7)
         
-        # Get bookings yang sudah checkin dan checkout di minggu ini
+        # Get bookings with checkin and checkout in the current week
         bookings = Booking.query.filter(
             Booking.user_id == user_id,
             Booking.checkin_at.isnot(None),
@@ -83,13 +63,8 @@ class StatsRepository:
     
     @staticmethod
     def get_favorite_space(user_id):
-        """
-        Get space favorit berdasarkan jumlah booking
-        Args:
-            user_id: ID of the user
-        Returns: dict with space info or None
-        """
-        # Query untuk mendapatkan space dengan booking terbanyak
+        """Get favorite space based on booking count"""
+        # Query to get the space with the highest booking count
         result = db.session.query(
             Booking.space_id,
             func.count(Booking.id).label('booking_count')

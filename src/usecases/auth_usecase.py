@@ -10,7 +10,7 @@ class AuthUseCase:
         self.auth_repository = AuthRepository()
     
     def login(self, username: str, password: str) -> Dict:
-        """Login user dengan username dan password"""
+        """Login user with username dan password"""
         try:
             # Validasi input
             if not username or not password:
@@ -72,7 +72,7 @@ class AuthUseCase:
     def register(self, username: str, email: str, password: str,
                 phone: str = None, role: str = 'user', 
                 department_id: int = None) -> Dict:
-        """Register user baru"""
+        """Create new user """
         try:
             # Validasi input
             if not username or not email or not password:

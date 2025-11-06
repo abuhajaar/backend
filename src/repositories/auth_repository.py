@@ -4,7 +4,7 @@ from src.models.department import Department
 from src.config.database import db
 
 class AuthRepository:
-    """Repository untuk authentication"""
+    """Repository for authentication"""
     
     def get_user_by_username(self, username: str) -> Optional[User]:
         """Get user by username"""

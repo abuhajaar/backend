@@ -1,7 +1,3 @@
-"""
-Routes untuk Booking
-Mendefinisikan endpoint-endpoint booking
-"""
 from flask import Blueprint
 from src.controllers.booking_controller import BookingController
 from src.utils.jwt_helper import token_required
@@ -17,7 +13,7 @@ controller = BookingController()
 def create_booking():
     """
     POST /api/bookings
-    Create booking baru
+    Create new booking
     """
     return controller.create_booking()
 
@@ -53,11 +49,5 @@ def get_user_bookings(user_id):
 def update_booking_status(booking_id):
     """
     PATCH /api/bookings/:id
-    Update booking status (checkin, checkout, cancel)
-    Body: 
-    {
-        "status": "checkin" | "checkout" | "cancel",
-        "checkin_code": "CHK-XXXXXXXX"  // required only for checkin
-    }
-    """
+    Update booking status (checkin, checkout, cancel)"""
     return controller.update_booking_status(booking_id)

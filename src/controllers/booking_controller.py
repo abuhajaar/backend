@@ -13,16 +13,7 @@ class BookingController:
         self.usecase = BookingUseCase()
     
     def create_booking(self):
-        """
-        Create booking baru
-        Expected body:
-        {
-            "user_id": int,
-            "space_id": int,
-            "start_at": "YYYY-MM-DD HH:MM:SS",
-            "end_at": "YYYY-MM-DD HH:MM:SS"
-        }
-        """
+        """Handler to create a new booking"""
         try:
             data = request.get_json()
             
@@ -31,7 +22,7 @@ class BookingController:
             for field in required_fields:
                 if field not in data:
                     return ResponseTemplate.bad_request(
-                        message=f"Field '{field}' wajib diisi"
+                        message=f"Field '{field}' required"
                     )
             
             # Create booking via usecase
@@ -44,7 +35,7 @@ class BookingController:
             
             return ResponseTemplate.created(
                 data=booking,
-                message="Booking berhasil dibuat"
+                message="Booking created successfully"
             )
             
         except ValueError as e:
@@ -53,13 +44,11 @@ class BookingController:
             )
         except Exception as e:
             return ResponseTemplate.internal_error(
-                message=f"Terjadi kesalahan: {str(e)}"
+                message=f"An error occurred: {str(e)}"
             )
     
     def get_booking_by_id(self, booking_id):
-        """
-        Get booking by ID
-        """
+        """Handler to get booking by ID"""
         try:
             booking = self.usecase.get_booking_by_id(booking_id)
             return ResponseTemplate.success(data=booking)
@@ -68,57 +57,46 @@ class BookingController:
             return ResponseTemplate.not_found(message=str(e))
         except Exception as e:
             return ResponseTemplate.internal_error(
-                message=f"Terjadi kesalahan: {str(e)}"
+                message=f"An error occurred: {str(e)}"
             )
     
     def get_all_bookings(self):
-        """
-        Get all bookings
-        """
+        """Handler to get all bookings"""
         try:
             bookings = self.usecase.get_all_bookings()
             return ResponseTemplate.success(
                 data=bookings,
-                message=f"Ditemukan {len(bookings)} booking"
+                message=f"Found {len(bookings)} bookings"
             )
             
         except Exception as e:
             return ResponseTemplate.internal_error(
-                message=f"Terjadi kesalahan: {str(e)}"
+                message=f"An error occurred: {str(e)}"
             )
     
     def get_user_bookings(self, user_id):
-        """
-        Get all bookings by user
-        """
+        """Handler to get all bookings by user"""
         try:
             bookings = self.usecase.get_user_bookings(user_id)
             return ResponseTemplate.success(
                 data=bookings,
-                message=f"Ditemukan {len(bookings)} booking untuk user {user_id}"
+                message=f"Found {len(bookings)} bookings for user {user_id}"
             )
             
         except Exception as e:
             return ResponseTemplate.internal_error(
-                message=f"Terjadi kesalahan: {str(e)}"
+                message=f"An error occurred: {str(e)}"
             )
     
     def update_booking_status(self, booking_id):
-        """
-        Update booking status (checkin, checkout, cancel)
-        Expected body:
-        {
-            "status": "checkin" | "checkout" | "cancel",
-            "checkin_code": "CHK-XXXXXXXX"  // required only for checkin
-        }
-        """
+        """Handler to update booking status (checkin, checkout, cancel)"""
         try:
             data = request.get_json()
             
             # Validasi required field
             if 'status' not in data:
                 return ResponseTemplate.bad_request(
-                    message="Field 'status' wajib diisi (checkin, checkout, atau cancel)"
+                    message="Field 'status' required (checkin, checkout, or cancel)"
                 )
             
             action = data['status']
@@ -130,17 +108,17 @@ class BookingController:
                 action=action,
                 checkin_code=checkin_code
             )
-            
-            # Response message berdasarkan action
+
+            # Response message based on action
             messages = {
-                'checkin': 'Checkin berhasil',
-                'checkout': 'Checkout berhasil',
-                'cancel': 'Booking berhasil dibatalkan'
+                'checkin': 'Checkin successful',
+                'checkout': 'Checkout successful',
+                'cancel': 'Booking successfully canceled'
             }
             
             return ResponseTemplate.success(
                 data=booking,
-                message=messages.get(action, 'Status booking berhasil diupdate')
+                message=messages.get(action, 'Booking status successfully updated')
             )
             
         except ValueError as e:
@@ -149,5 +127,5 @@ class BookingController:
             )
         except Exception as e:
             return ResponseTemplate.internal_error(
-                message=f"Terjadi kesalahan: {str(e)}"
+                message=f"An error occurred: {str(e)}"
             )

@@ -2,13 +2,13 @@ from flask import request, jsonify
 from src.usecases.auth_usecase import AuthUseCase
 
 class AuthController:
-    """Controller untuk authentication"""
+    """Controller to handle authentication"""
     
     def __init__(self):
         self.auth_usecase = AuthUseCase()
     
     def login(self):
-        """Handler untuk login"""
+        """Handler to login"""
         print("AuthController: login called")
         data = request.get_json()
         
@@ -21,7 +21,7 @@ class AuthController:
         return jsonify(result), status_code
     
     def register(self):
-        """Handler untuk register user baru"""
+        """Handler to register new user"""
         data = request.get_json()
         
         if not data:
@@ -50,7 +50,7 @@ class AuthController:
         return jsonify(result), status_code
     
     def get_current_user(self):
-        """Handler untuk get current user info"""
+        """Handler to get current user info"""
         # User info dari JWT token (ditambahkan oleh decorator)
         user_id = request.current_user.get('user_id')
         

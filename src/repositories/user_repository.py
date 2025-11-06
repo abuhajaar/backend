@@ -3,22 +3,22 @@ from src.models.user import User
 from src.config.database import db
 
 class UserRepository:
-    """Repository untuk mengelola data User di database"""
+    """Repository for User operations"""
     
     def get_all(self) -> List[User]:
-        """Mengambil semua user dari database"""
+        """Get all users from the database"""
         return User.query.all()
     
     def get_by_id(self, user_id: int) -> Optional[User]:
-        """Mengambil user berdasarkan ID"""
+        """Get user by ID"""
         return User.query.get(user_id)
     
     def get_by_email(self, email: str) -> Optional[User]:
-        """Mengambil user berdasarkan email"""
+        """Get user by email"""
         return User.query.filter_by(email=email).first()
     
     def create(self, name: str, email: str) -> User:
-        """Membuat user baru"""
+        """Create new user"""
         new_user = User(name=name, email=email)
         db.session.add(new_user)
         db.session.commit()
@@ -36,7 +36,7 @@ class UserRepository:
         return user
     
     def delete(self, user_id: int) -> bool:
-        """Hapus user"""
+        """Delete user"""
         user = self.get_by_id(user_id)
         if user:
             db.session.delete(user)

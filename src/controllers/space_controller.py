@@ -1,27 +1,16 @@
-"""
-Controller untuk Space
-Menghandle request/response untuk Space endpoints
-"""
 from flask import jsonify
 from src.usecases.space_usecase import SpaceUseCase
 from src.utils.response_template import ResponseTemplate
 
 class SpaceController:
-    """Controller untuk Space endpoints"""
+    """Controller to handle Space requests"""
     
     def __init__(self):
         self.space_usecase = SpaceUseCase()
         self.response = ResponseTemplate()
     
     def get_all_spaces(self, date=None, start_time=None, end_time=None):
-        """
-        Get all spaces with optional time filters
-        Args:
-            date: Date in YYYY-MM-DD format (optional)
-            start_time: Start time in HH:MM format (optional)
-            end_time: End time in HH:MM format (optional)
-        Returns: JSON response
-        """
+        """Handler to get all spaces with optional time filters"""
         try:
             spaces = self.space_usecase.get_all_spaces(date, start_time, end_time)
             return self.response.success(
@@ -38,12 +27,7 @@ class SpaceController:
             )
     
     def get_space_by_id(self, space_id):
-        """
-        Get space by ID
-        Args:
-            space_id: ID of the space
-        Returns: JSON response
-        """
+        """Handler to get space by ID"""
         try:
             space = self.space_usecase.get_space_by_id(space_id)
             

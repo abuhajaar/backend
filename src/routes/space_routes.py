@@ -1,7 +1,3 @@
-"""
-Routes untuk Space
-Define endpoints untuk Space
-"""
 from flask import Blueprint, request
 from src.controllers.space_controller import SpaceController
 from src.utils.jwt_helper import token_required
@@ -15,13 +11,7 @@ space_controller = SpaceController()
 @space_routes.route('/spaces', methods=['GET'])
 @token_required
 def get_all_spaces():
-    """
-    Get all spaces with optional filters
-    Query params:
-    - date: YYYY-MM-DD (optional)
-    - start_time: HH:MM (optional)
-    - end_time: HH:MM (optional)
-    """
+    """Get all spaces with optional filters"""
     date = request.args.get('date')
     start_time = request.args.get('start_time')
     end_time = request.args.get('end_time')

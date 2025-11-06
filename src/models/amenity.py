@@ -2,7 +2,7 @@ from datetime import datetime
 from src.config.database import db
 
 class Amenity(db.Model):
-    """Amenity model - fasilitas di setiap space"""
+    """Amenity model - facilities in each space"""
     
     __tablename__ = 'amenities'
     

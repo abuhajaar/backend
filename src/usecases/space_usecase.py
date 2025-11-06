@@ -1,7 +1,4 @@
-"""
-Use case untuk Space
-Menghandle business logic untuk Space
-"""
+
 from datetime import datetime, timedelta
 from src.repositories.space_repository import SpaceRepository
 from src.models.floor import Floor
@@ -9,21 +6,13 @@ from src.models.amenity import Amenity
 from src.models.booking import Booking
 
 class SpaceUseCase:
-    """Use case untuk Space business logic"""
+    """Use case for Space business logic"""
     
     def __init__(self):
         self.space_repository = SpaceRepository()
     
     def get_all_spaces(self, date=None, start_time=None, end_time=None):
-        """
-        Get all spaces dengan floor name dan amenities
-        Filter berdasarkan availability jika date dan time diberikan
-        Args:
-            date: Date in YYYY-MM-DD format (optional)
-            start_time: Start time in HH:MM format (optional)
-            end_time: End time in HH:MM format (optional)
-        Returns: List of dict dengan space data lengkap
-        """
+        """Get all spaces with floor name dan amenities"""
         spaces = self.space_repository.get_all_spaces()
         result = []
         
@@ -116,12 +105,6 @@ class SpaceUseCase:
         """
         Check if space is available for the requested time
         Also returns available hours for the entire day
-        Args:
-            space: Space object
-            requested_start: datetime object
-            requested_end: datetime object
-            check_date: datetime object for the date to check
-        Returns: Dict with is_available and available_hours
         """
         result = {
             'is_available': True,

@@ -2,7 +2,7 @@ from datetime import datetime
 from src.config.database import db
 
 class Booking(db.Model):
-    """Booking model - reservasi space oleh user"""
+    """Booking model - user reservations for spaces"""
     
     __tablename__ = 'bookings'
     

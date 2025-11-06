@@ -2,7 +2,7 @@ from datetime import datetime
 from src.config.database import db
 
 class Blackout(db.Model):
-    """Blackout model - tanggal-tanggal libur/tidak tersedia"""
+    """Blackout model - periods when spaces are unavailable"""
     
     __tablename__ = 'blackouts'
     

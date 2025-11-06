@@ -1,7 +1,3 @@
-"""
-UseCase untuk Booking
-Berisi business logic untuk booking operations
-"""
 from datetime import datetime, timedelta
 import secrets
 import string

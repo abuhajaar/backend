@@ -1,10 +1,10 @@
 from flask import jsonify
 
 class HealthController:
-    """Controller untuk health check"""
+    """Controller to handle health check"""
     
     def health_check(self):
-        """Handler untuk health check"""
+        """Handler to check health status of the server"""
         return jsonify({
             'success': True,
             'message': 'Server is running',

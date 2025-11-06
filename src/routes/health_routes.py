@@ -10,5 +10,5 @@ health_controller = HealthController()
 # Define routes
 @health_routes.route('/health', methods=['GET'])
 def health_check():
-    """Route untuk health check"""
+    """Route for health check"""
     return health_controller.health_check()
