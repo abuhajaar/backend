@@ -34,10 +34,10 @@ def create_app():
     # Register blueprints
     app.register_blueprint(health_routes, url_prefix='/api')
     app.register_blueprint(auth_routes, url_prefix='/api/auth')
-    app.register_blueprint(user_routes, url_prefix='/api')
-    app.register_blueprint(space_routes, url_prefix='/api')
-    app.register_blueprint(booking_bp)  # booking_bp sudah punya url_prefix di definisi
-    app.register_blueprint(stats_bp)  # stats_bp sudah punya url_prefix di definisi
+    app.register_blueprint(user_routes, url_prefix='/api/users')
+    app.register_blueprint(space_routes, url_prefix='/api/spaces')
+    app.register_blueprint(booking_bp, url_prefix='/api/bookings')
+    app.register_blueprint(stats_bp, url_prefix='/api/stats_employee')
     
     # Create tables
     with app.app_context():

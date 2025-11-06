@@ -3,7 +3,7 @@ from src.controllers.booking_controller import BookingController
 from src.utils.jwt_helper import token_required
 
 # Create blueprint
-booking_bp = Blueprint('booking', __name__, url_prefix='/api/bookings')
+booking_bp = Blueprint('booking', __name__)
 
 # Initialize controller
 controller = BookingController()

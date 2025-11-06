@@ -174,16 +174,7 @@ class SpaceUseCase:
         return result
     
     def _calculate_available_hours(self, space, check_date, open_time, close_time, bookings):
-        """
-        Calculate available hours for the entire day
-        Args:
-            space: Space object
-            check_date: datetime object for the date
-            open_time: time object for opening
-            close_time: time object for closing
-            bookings: List of Booking objects
-        Returns: List of available time slots
-        """
+        """Calculate available hours for the entire day"""
         available_slots = []
         
         # Convert times to datetime for easier calculation
@@ -218,15 +209,7 @@ class SpaceUseCase:
         return available_slots
     
     def _is_time_slot_available(self, requested_start, requested_end, bookings, buffer_min):
-        """
-        Check if a specific time slot is available
-        Args:
-            requested_start: datetime object
-            requested_end: datetime object
-            bookings: List of Booking objects
-            buffer_min: int, buffer minutes
-        Returns: Boolean
-        """
+        """Check if a specific time slot is available"""
         buffer_minutes = buffer_min or 0
         
         for booking in bookings:
@@ -242,12 +225,7 @@ class SpaceUseCase:
         return True
     
     def get_space_by_id(self, space_id):
-        """
-        Get space by ID dengan floor name dan amenities
-        Args:
-            space_id: ID of the space
-        Returns: Dict with space data or None
-        """
+        """Get space by ID with floor name dan amenities"""
         space = self.space_repository.get_space_by_id(space_id)
         
         if not space:

@@ -3,13 +3,13 @@ from src.repositories.user_repository import UserRepository
 from src.config.database import db
 
 class UserUseCase:
-    """UseCase untuk business logic User"""
+    """UseCase for business logic User"""
     
     def __init__(self):
         self.user_repository = UserRepository()
     
     def get_all_users(self) -> Dict:
-        """Mendapatkan semua users"""
+        """Get all users"""
         try:
             users = self.user_repository.get_all()
             users_list = [user.to_dict() for user in users]
@@ -25,7 +25,7 @@ class UserUseCase:
             }
     
     def get_user_by_id(self, user_id: int) -> Dict:
-        """Mendapatkan user berdasarkan ID"""
+        """Get user by ID"""
         try:
             user = self.user_repository.get_by_id(user_id)
             if user:
@@ -44,7 +44,7 @@ class UserUseCase:
             }
     
     def create_user(self, name: str, email: str) -> Dict:
-        """Membuat user baru"""
+        """Create a new user"""
         try:
             # Validasi input
             if not name or not email:
@@ -104,7 +104,7 @@ class UserUseCase:
             }
     
     def delete_user(self, user_id: int) -> Dict:
-        """Hapus user"""
+        """Delete user"""
         try:
             success = self.user_repository.delete(user_id)
             if success:

@@ -1,22 +1,13 @@
-"""
-UseCase untuk Statistics
-Berisi business logic untuk statistics operations
-"""
 from src.repositories.stats_repository import StatsRepository
 
 class StatsUseCase:
-    """UseCase untuk business logic Statistics"""
+    """UseCase for business logic Statistics"""
     
     def __init__(self):
         self.repository = StatsRepository()
     
     def get_employee_stats(self, user_id):
-        """
-        Get statistics untuk employee
-        Args:
-            user_id: ID of the user
-        Returns: dict dengan statistics data
-        """
+        """Get statistics for each employee"""
         # Get all statistics
         today_bookings = self.repository.get_today_bookings_count(user_id)
         upcoming_bookings = self.repository.get_upcoming_bookings_count(user_id)

@@ -8,7 +8,7 @@ space_routes = Blueprint('space', __name__)
 # Initialize controller
 space_controller = SpaceController()
 
-@space_routes.route('/spaces', methods=['GET'])
+@space_routes.route('', methods=['GET'])
 @token_required
 def get_all_spaces():
     """Get all spaces with optional filters"""
@@ -18,7 +18,7 @@ def get_all_spaces():
     
     return space_controller.get_all_spaces(date, start_time, end_time)
 
-@space_routes.route('/spaces/<int:space_id>', methods=['GET'])
+@space_routes.route('/<int:space_id>', methods=['GET'])
 @token_required
 def get_space_by_id(space_id):
     """Get space by ID"""

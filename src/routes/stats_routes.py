@@ -7,7 +7,7 @@ from src.controllers.stats_controller import StatsController
 from src.utils.jwt_helper import token_required
 
 # Create blueprint
-stats_bp = Blueprint('stats', __name__, url_prefix='/api/stats_employee')
+stats_bp = Blueprint('stats', __name__)
 
 # Initialize controller
 controller = StatsController()
