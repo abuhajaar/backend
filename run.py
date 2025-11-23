@@ -10,5 +10,5 @@ if __name__ == '__main__':
     # Get debug mode from environment
     debug = os.environ.get('DEBUG', 'False').lower() == 'true'
     
-    # IMPORTANT: host='0.0.0.0' untuk allow external connections (Docker, Cloudflare Tunnel)
+    # IMPORTANT: host='0.0.0.0' untuk allow external connections (Network, Docker, Cloudflare Tunnel)
     app.run(debug=debug, host='0.0.0.0', port=port)

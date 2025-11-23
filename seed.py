@@ -104,11 +104,9 @@ def seed_data():
         # Create Floors
         print("\n🏢 Creating floors...")
         floors_data = [
-            {'id': 1, 'name': 'Lantai 10'},
-            {'id': 2, 'name': 'Lantai 11'},
-            {'id': 3, 'name': 'Lantai 12'},
-            {'id': 4, 'name': 'Lantai 13'},
-            {'id': 5, 'name': 'Lantai 14'}
+            {'id': 1, 'name': 'Lantai 1'},
+            {'id': 2, 'name': 'Lantai 2'},
+            {'id': 3, 'name': 'Lantai 3'}
         ]
         
         for floor_data in floors_data:
@@ -137,101 +135,96 @@ def seed_data():
             'sun': None
         }
         
-        # Get available floor IDs for random assignment
-        floor_ids = [1, 2, 3, 4, 5]
+        spaces_data = []
+        space_id = 1
         
-        spaces_data = [
-            {
-                'id': 1, 'name': 'Ruang Merapi', 'type': 'meeting_room',
-                'capacity': 8, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 120, 'buffer_min': 15, 'status': 'available'
-            },
-            {
-                'id': 2, 'name': 'Booth 1', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 3, 'name': 'Ruang Bromo', 'type': 'meeting_room',
-                'capacity': 10, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 120, 'buffer_min': 15, 'status': 'in_maintenance'
-            },
-            {
-                'id': 4, 'name': 'Ruang Semeru', 'type': 'meeting_room',
-                'capacity': 12, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 180, 'buffer_min': 15, 'status': 'available'
-            },
-            {
-                'id': 5, 'name': 'Booth 2', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 6, 'name': 'Booth 3', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 7, 'name': 'Booth 4', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 8, 'name': 'Ruang Rinjani', 'type': 'meeting_room',
-                'capacity': 6, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 120, 'buffer_min': 10, 'status': 'available'
-            },
-            {
-                'id': 9, 'name': 'Ruang Krakatau', 'type': 'meeting_room',
-                'capacity': 15, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 240, 'buffer_min': 20, 'status': 'available'
-            },
-            {
-                'id': 10, 'name': 'Booth 5', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 11, 'name': 'Booth 6', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 12, 'name': 'Ruang Merbabu', 'type': 'meeting_room',
-                'capacity': 8, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 120, 'buffer_min': 15, 'status': 'available'
-            },
-            {
-                'id': 13, 'name': 'Booth 7', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 14, 'name': 'Booth 8', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 15, 'name': 'Ruang Slamet', 'type': 'meeting_room',
-                'capacity': 4, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 90, 'buffer_min': 10, 'status': 'available'
-            },
-            {
-                'id': 16, 'name': 'Booth 9', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 17, 'name': 'Booth 10', 'type': 'hot_desk',
-                'capacity': 1, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 60, 'buffer_min': 5, 'status': 'available'
-            },
-            {
-                'id': 18, 'name': 'Ruang Arjuno', 'type': 'meeting_room',
-                'capacity': 6, 'location': random.choice(floor_ids), 'opening_hours': opening_hours,
-                'max_duration': 120, 'buffer_min': 10, 'status': 'available'
-            }
+        # Lantai 1: 12 hot_desk, 3 meeting_room, 2 private_room
+        # Hot Desks
+        for i in range(1, 13):
+            spaces_data.append({
+                'id': space_id, 'name': f'Hot Desk 1.{i}', 'type': 'hot_desk',
+                'capacity': 1, 'location': 1, 'opening_hours': opening_hours,
+                'max_duration': 480, 'buffer_min': 5, 'status': 'available'
+            })
+            space_id += 1
+        
+        # Meeting Rooms
+        meeting_rooms_l1 = [
+            {'name': 'Meeting Room 1.1', 'capacity': 6},
+            {'name': 'Meeting Room 1.2', 'capacity': 8},
+            {'name': 'Meeting Room 1.3', 'capacity': 10}
         ]
+        for mr in meeting_rooms_l1:
+            spaces_data.append({
+                'id': space_id, 'name': mr['name'], 'type': 'meeting_room',
+                'capacity': mr['capacity'], 'location': 1, 'opening_hours': opening_hours,
+                'max_duration': 180, 'buffer_min': 15, 'status': 'available'
+            })
+            space_id += 1
+        
+        # Private Rooms
+        for i in range(1, 3):
+            spaces_data.append({
+                'id': space_id, 'name': f'Private Room 1.{i}', 'type': 'private_room',
+                'capacity': 2, 'location': 1, 'opening_hours': opening_hours,
+                'max_duration': 480, 'buffer_min': 10, 'status': 'available'
+            })
+            space_id += 1
+        
+        # Lantai 2: 8 hot_desk, 3 meeting_room, 1 private_room
+        # Hot Desks
+        for i in range(1, 9):
+            spaces_data.append({
+                'id': space_id, 'name': f'Hot Desk 2.{i}', 'type': 'hot_desk',
+                'capacity': 1, 'location': 2, 'opening_hours': opening_hours,
+                'max_duration': 480, 'buffer_min': 5, 'status': 'available'
+            })
+            space_id += 1
+        
+        # Meeting Rooms
+        meeting_rooms_l2 = [
+            {'name': 'Meeting Room 2.1', 'capacity': 8},
+            {'name': 'Meeting Room 2.2', 'capacity': 10},
+            {'name': 'Meeting Room 2.3', 'capacity': 12}
+        ]
+        for mr in meeting_rooms_l2:
+            spaces_data.append({
+                'id': space_id, 'name': mr['name'], 'type': 'meeting_room',
+                'capacity': mr['capacity'], 'location': 2, 'opening_hours': opening_hours,
+                'max_duration': 180, 'buffer_min': 15, 'status': 'available'
+            })
+            space_id += 1
+        
+        # Private Room
+        spaces_data.append({
+            'id': space_id, 'name': 'Private Room 2.1', 'type': 'private_room',
+            'capacity': 2, 'location': 2, 'opening_hours': opening_hours,
+            'max_duration': 480, 'buffer_min': 10, 'status': 'available'
+        })
+        space_id += 1
+        
+        # Lantai 3: 0 hot_desk, 2 meeting_room, 4 private_room
+        # Meeting Rooms
+        meeting_rooms_l3 = [
+            {'name': 'Meeting Room 3.1', 'capacity': 15},
+            {'name': 'Meeting Room 3.2', 'capacity': 20}
+        ]
+        for mr in meeting_rooms_l3:
+            spaces_data.append({
+                'id': space_id, 'name': mr['name'], 'type': 'meeting_room',
+                'capacity': mr['capacity'], 'location': 3, 'opening_hours': opening_hours,
+                'max_duration': 240, 'buffer_min': 20, 'status': 'available'
+            })
+            space_id += 1
+        
+        # Private Rooms
+        for i in range(1, 5):
+            spaces_data.append({
+                'id': space_id, 'name': f'Private Room 3.{i}', 'type': 'private_room',
+                'capacity': 3, 'location': 3, 'opening_hours': opening_hours,
+                'max_duration': 480, 'buffer_min': 10, 'status': 'available'
+            })
+            space_id += 1
         
         for space_data in spaces_data:
             space = Space.query.filter_by(id=space_data['id']).first()
@@ -248,73 +241,93 @@ def seed_data():
         
         # Create Amenities
         print("\n🛠️  Creating amenities...")
-        amenities_data = [
-            # Ruang Merapi (ID: 1)
-            {'id': 1, 'space_id': 1, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 2, 'space_id': 1, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 3, 'space_id': 1, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            # Booth 1 (ID: 2)
-            {'id': 4, 'space_id': 2, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 5, 'space_id': 2, 'name': 'AC', 'icon': 'ac'},
-            # Ruang Bromo (ID: 3)
-            {'id': 6, 'space_id': 3, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 7, 'space_id': 3, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 8, 'space_id': 3, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            # Ruang Semeru (ID: 4)
-            {'id': 9, 'space_id': 4, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 10, 'space_id': 4, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 11, 'space_id': 4, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            {'id': 12, 'space_id': 4, 'name': 'Projector', 'icon': 'projector'},
-            # Booth 2 (ID: 5)
-            {'id': 13, 'space_id': 5, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 14, 'space_id': 5, 'name': 'AC', 'icon': 'ac'},
-            # Booth 3 (ID: 6)
-            {'id': 15, 'space_id': 6, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 16, 'space_id': 6, 'name': 'AC', 'icon': 'ac'},
-            # Booth 4 (ID: 7)
-            {'id': 17, 'space_id': 7, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 18, 'space_id': 7, 'name': 'AC', 'icon': 'ac'},
-            # Ruang Rinjani (ID: 8)
-            {'id': 19, 'space_id': 8, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 20, 'space_id': 8, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 21, 'space_id': 8, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            # Ruang Krakatau (ID: 9)
-            {'id': 22, 'space_id': 9, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 23, 'space_id': 9, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 24, 'space_id': 9, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            {'id': 25, 'space_id': 9, 'name': 'Projector', 'icon': 'projector'},
-            {'id': 26, 'space_id': 9, 'name': 'Video Conference', 'icon': 'video'},
-            # Booth 5 (ID: 10)
-            {'id': 27, 'space_id': 10, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 28, 'space_id': 10, 'name': 'AC', 'icon': 'ac'},
-            # Booth 6 (ID: 11)
-            {'id': 29, 'space_id': 11, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 30, 'space_id': 11, 'name': 'AC', 'icon': 'ac'},
-            # Ruang Merbabu (ID: 12)
-            {'id': 31, 'space_id': 12, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 32, 'space_id': 12, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 33, 'space_id': 12, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            # Booth 7 (ID: 13)
-            {'id': 34, 'space_id': 13, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 35, 'space_id': 13, 'name': 'AC', 'icon': 'ac'},
-            # Booth 8 (ID: 14)
-            {'id': 36, 'space_id': 14, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 37, 'space_id': 14, 'name': 'AC', 'icon': 'ac'},
-            # Ruang Slamet (ID: 15)
-            {'id': 38, 'space_id': 15, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 39, 'space_id': 15, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 40, 'space_id': 15, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-            # Booth 9 (ID: 16)
-            {'id': 41, 'space_id': 16, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 42, 'space_id': 16, 'name': 'AC', 'icon': 'ac'},
-            # Booth 10 (ID: 17)
-            {'id': 43, 'space_id': 17, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 44, 'space_id': 17, 'name': 'AC', 'icon': 'ac'},
-            # Ruang Arjuno (ID: 18)
-            {'id': 45, 'space_id': 18, 'name': 'Wi-Fi', 'icon': 'wifi'},
-            {'id': 46, 'space_id': 18, 'name': 'Monitor', 'icon': 'monitor'},
-            {'id': 47, 'space_id': 18, 'name': 'Whiteboard', 'icon': 'whiteboard'},
-        ]
+        amenities_data = []
+        amenity_id = 1
+        
+        # Amenities for Lantai 1
+        # Hot Desks (1-12) - basic amenities
+        for space_id in range(1, 13):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'}
+            ])
+            amenity_id += 2
+        
+        # Meeting Rooms (13-15) - standard meeting amenities
+        for space_id in range(13, 16):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'Monitor', 'icon': 'monitor'},
+                {'id': amenity_id + 2, 'space_id': space_id, 'name': 'Whiteboard', 'icon': 'whiteboard'},
+                {'id': amenity_id + 3, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'}
+            ])
+            amenity_id += 4
+        
+        # Private Rooms (16-17) - premium amenities
+        for space_id in range(16, 18):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'Monitor', 'icon': 'monitor'},
+                {'id': amenity_id + 2, 'space_id': space_id, 'name': 'Whiteboard', 'icon': 'whiteboard'},
+                {'id': amenity_id + 3, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'},
+                {'id': amenity_id + 4, 'space_id': space_id, 'name': 'Printer', 'icon': 'printer'}
+            ])
+            amenity_id += 5
+        
+        # Amenities for Lantai 2
+        # Hot Desks (18-25) - basic amenities
+        for space_id in range(18, 26):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'}
+            ])
+            amenity_id += 2
+        
+        # Meeting Rooms (26-28) - standard meeting amenities
+        for space_id in range(26, 29):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'Monitor', 'icon': 'monitor'},
+                {'id': amenity_id + 2, 'space_id': space_id, 'name': 'Whiteboard', 'icon': 'whiteboard'},
+                {'id': amenity_id + 3, 'space_id': space_id, 'name': 'Projector', 'icon': 'projector'},
+                {'id': amenity_id + 4, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'}
+            ])
+            amenity_id += 5
+        
+        # Private Room (29) - premium amenities
+        amenities_data.extend([
+            {'id': amenity_id, 'space_id': 29, 'name': 'Wi-Fi', 'icon': 'wifi'},
+            {'id': amenity_id + 1, 'space_id': 29, 'name': 'Monitor', 'icon': 'monitor'},
+            {'id': amenity_id + 2, 'space_id': 29, 'name': 'Whiteboard', 'icon': 'whiteboard'},
+            {'id': amenity_id + 3, 'space_id': 29, 'name': 'AC', 'icon': 'ac'},
+            {'id': amenity_id + 4, 'space_id': 29, 'name': 'Printer', 'icon': 'printer'}
+        ])
+        amenity_id += 5
+        
+        # Amenities for Lantai 3
+        # Meeting Rooms (30-31) - executive meeting amenities
+        for space_id in range(30, 32):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'Monitor', 'icon': 'monitor'},
+                {'id': amenity_id + 2, 'space_id': space_id, 'name': 'Whiteboard', 'icon': 'whiteboard'},
+                {'id': amenity_id + 3, 'space_id': space_id, 'name': 'Projector', 'icon': 'projector'},
+                {'id': amenity_id + 4, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'},
+                {'id': amenity_id + 5, 'space_id': space_id, 'name': 'Video Conference', 'icon': 'video'}
+            ])
+            amenity_id += 6
+        
+        # Private Rooms (32-35) - executive amenities
+        for space_id in range(32, 36):
+            amenities_data.extend([
+                {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
+                {'id': amenity_id + 1, 'space_id': space_id, 'name': 'Monitor', 'icon': 'monitor'},
+                {'id': amenity_id + 2, 'space_id': space_id, 'name': 'Whiteboard', 'icon': 'whiteboard'},
+                {'id': amenity_id + 3, 'space_id': space_id, 'name': 'AC', 'icon': 'ac'},
+                {'id': amenity_id + 4, 'space_id': space_id, 'name': 'Printer', 'icon': 'printer'},
+                {'id': amenity_id + 5, 'space_id': space_id, 'name': 'Coffee Machine', 'icon': 'coffee'}
+            ])
+            amenity_id += 6
         
         for amenity_data in amenities_data:
             amenity = Amenity.query.filter_by(id=amenity_data['id']).first()
@@ -351,39 +364,7 @@ def seed_data():
         
         # Create Bookings
         print("\n📅 Creating bookings...")
-        bookings_data = [
-            {
-                'id': 1, 'user_id': 4, 'space_id': 1, 'status': 'active',
-                'start_at': datetime(2025, 1, 5, 3, 0, 0),
-                'end_at': datetime(2025, 1, 5, 4, 30, 0),
-                'buffer_min_snapshot': 15, 'max_duration_snapshot': 120,
-                'checkin_code': 'CHK-1A2B3C4D',
-                'code_valid_from': datetime(2025, 1, 5, 2, 45, 0),
-                'code_valid_to': datetime(2025, 1, 5, 4, 45, 0),
-                'checkin_at': None, 'checkout_at': None
-            },
-            {
-                'id': 2, 'user_id': 5, 'space_id': 2, 'status': 'active',
-                'start_at': datetime(2025, 1, 5, 2, 0, 0),
-                'end_at': datetime(2025, 1, 5, 2, 30, 0),
-                'buffer_min_snapshot': 5, 'max_duration_snapshot': 60,
-                'checkin_code': 'CHK-9Z8Y7X6W',
-                'code_valid_from': datetime(2025, 1, 5, 1, 45, 0),
-                'code_valid_to': datetime(2025, 1, 5, 2, 45, 0),
-                'checkin_at': datetime(2025, 1, 5, 2, 0, 30),
-                'checkout_at': None
-            },
-            {
-                'id': 3, 'user_id': 4, 'space_id': 1, 'status': 'cancelled',
-                'start_at': datetime(2025, 1, 6, 6, 0, 0),
-                'end_at': datetime(2025, 1, 6, 7, 0, 0),
-                'buffer_min_snapshot': 15, 'max_duration_snapshot': 120,
-                'checkin_code': 'CHK-CANCELLED',
-                'code_valid_from': datetime(2025, 1, 6, 5, 45, 0),
-                'code_valid_to': datetime(2025, 1, 6, 7, 15, 0),
-                'checkin_at': None, 'checkout_at': None
-            }
-        ]
+        bookings_data = []
         
         for booking_data in bookings_data:
             booking = Booking.query.filter_by(id=booking_data['id']).first()

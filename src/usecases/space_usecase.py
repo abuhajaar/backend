@@ -68,13 +68,21 @@ class SpaceUseCase:
                 is_available = availability_result['is_available']
                 available_hours = availability_result['available_hours']
                 
+                print(f"DEBUG - Space {space.id}: is_closed={availability_result.get('is_closed')}, outside_hours={availability_result.get('outside_hours')}")
+                
                 # If available_hours is empty/null, space is not available for that day
                 if available_hours is not None and len(available_hours) == 0:
                     is_available = False
-            
-            # Skip space if not available (when filters are applied)
-            if requested_start and requested_end and not is_available:
-                continue
+                
+                # Skip space if opening hours is not available (closed) on requested date
+                if availability_result.get('is_closed'):
+                    print(f"DEBUG - Skipping space {space.id} - CLOSED")
+                    continue
+                
+                # Skip space if requested time is outside opening hours
+                if availability_result.get('outside_hours'):
+                    print(f"DEBUG - Skipping space {space.id} - OUTSIDE HOURS")
+                    continue
             
             # Build response
             space_data = {
@@ -108,7 +116,9 @@ class SpaceUseCase:
         """
         result = {
             'is_available': True,
-            'available_hours': []
+            'available_hours': [],
+            'is_closed': False,
+            'outside_hours': False
         }
         
         # Check if space is active
@@ -122,26 +132,44 @@ class SpaceUseCase:
         open_time = None
         close_time = None
         
-        if space.opening_hours and isinstance(space.opening_hours, dict):
-            day_hours = space.opening_hours.get(day_of_week)
+        if not space.opening_hours or not isinstance(space.opening_hours, dict):
+            # No opening hours defined, treat as closed
+            result['is_available'] = False
+            result['is_closed'] = True
+            return result
+        
+        day_hours = space.opening_hours.get(day_of_week)
+        
+        if not day_hours:  # Closed on this day
+            result['is_available'] = False
+            result['is_closed'] = True  # Mark as closed
+            return result
+        
+        # Parse opening hours
+        try:
+            open_time = datetime.strptime(day_hours['start'], '%H:%M').time()
+            close_time = datetime.strptime(day_hours['end'], '%H:%M').time()
             
-            if not day_hours:  # Closed on this day
+            requested_start_time = requested_start.time()
+            requested_end_time = requested_end.time()
+            
+            print(f"DEBUG - Requested time: {requested_start_time} to {requested_end_time}")
+            print(f"DEBUG - Opening time: {open_time} to {close_time}")
+            print(f"DEBUG - Check: start {requested_start_time} < open {open_time} = {requested_start_time < open_time}")
+            print(f"DEBUG - Check: end {requested_end_time} > close {close_time} = {requested_end_time > close_time}")
+            
+            # Check if requested time is within opening hours
+            if requested_start_time < open_time or requested_end_time > close_time:
                 result['is_available'] = False
+                result['outside_hours'] = True  # Mark as outside operating hours
+                print(f"DEBUG - OUTSIDE HOURS SET TO TRUE")
                 return result
-            
-            # Parse opening hours
-            try:
-                open_time = datetime.strptime(day_hours['start'], '%H:%M').time()
-                close_time = datetime.strptime(day_hours['end'], '%H:%M').time()
-                
-                requested_start_time = requested_start.time()
-                requested_end_time = requested_end.time()
-                
-                # Check if requested time is within opening hours
-                if requested_start_time < open_time or requested_end_time > close_time:
-                    result['is_available'] = False
-            except (KeyError, ValueError):
-                pass
+        except (KeyError, ValueError) as e:
+            # Invalid opening hours format, treat as closed
+            print(f"DEBUG - Error parsing opening hours: {e}")
+            result['is_available'] = False
+            result['is_closed'] = True
+            return result
         
         # Get all bookings for this space on the requested date
         date_start = datetime.combine(check_date.date(), datetime.min.time())
