@@ -60,6 +60,7 @@ class SpaceUseCase:
             # Check availability if time filters provided
             is_available = True
             available_hours = None
+            unavailable_reason = None
             
             if requested_start and requested_end:
                 availability_result = self._check_space_availability(
@@ -67,6 +68,7 @@ class SpaceUseCase:
                 )
                 is_available = availability_result['is_available']
                 available_hours = availability_result['available_hours']
+                unavailable_reason = availability_result.get('unavailable_reason')
                 
                 print(f"DEBUG - Space {space.id}: is_closed={availability_result.get('is_closed')}, outside_hours={availability_result.get('outside_hours')}")
                 
@@ -105,6 +107,10 @@ class SpaceUseCase:
             if available_hours is not None:
                 space_data['available_hours'] = available_hours
             
+            # Add unavailable_reason only if date is provided and space is not available
+            if requested_start and requested_end:
+                space_data['unavailable_reason'] = unavailable_reason
+            
             result.append(space_data)
         
         return result
@@ -118,7 +124,8 @@ class SpaceUseCase:
             'is_available': True,
             'available_hours': [],
             'is_closed': False,
-            'outside_hours': False
+            'outside_hours': False,
+            'unavailable_reason': None
         }
         
         # Check if space is active
@@ -192,12 +199,24 @@ class SpaceUseCase:
             result['available_hours'] = available_hours
             
             # Check if requested time slot is available
-            requested_available = self._is_time_slot_available(
+            conflicting_booking = self._find_conflicting_booking(
                 requested_start, requested_end, bookings, space.buffer_min
             )
             
-            if not requested_available:
+            if conflicting_booking:
                 result['is_available'] = False
+                # Build unavailable reason with user info
+                from src.models.user import User
+                user = User.query.get(conflicting_booking.user_id)
+                username = user.username if user else "Unknown"
+                
+                start_time = conflicting_booking.start_at.strftime('%H:%M')
+                end_time = conflicting_booking.end_at.strftime('%H:%M')
+                
+                result['unavailable_reason'] = (
+                    f"Space ini sudah di booking oleh {username} "
+                    f"mulai dari jam {start_time} sampai {end_time}"
+                )
         
         return result
     
@@ -235,6 +254,22 @@ class SpaceUseCase:
             })
         
         return available_slots
+    
+    def _find_conflicting_booking(self, requested_start, requested_end, bookings, buffer_min):
+        """Find the first booking that conflicts with requested time slot"""
+        buffer_minutes = buffer_min or 0
+        
+        for booking in bookings:
+            # Calculate booking time range with buffer
+            booking_start_with_buffer = booking.start_at - timedelta(minutes=buffer_minutes)
+            booking_end_with_buffer = booking.end_at + timedelta(minutes=buffer_minutes)
+            
+            # Check if there's any overlap
+            if (requested_start < booking_end_with_buffer and 
+                requested_end > booking_start_with_buffer):
+                return booking
+        
+        return None
     
     def _is_time_slot_available(self, requested_start, requested_end, bookings, buffer_min):
         """Check if a specific time slot is available"""
