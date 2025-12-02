@@ -12,7 +12,6 @@ class Booking(db.Model):
     status = db.Column(db.String(20), default='active')  # active, cancelled, no_show
     start_at = db.Column(db.DateTime, nullable=False)
     end_at = db.Column(db.DateTime, nullable=False)
-    buffer_min_snapshot = db.Column(db.Integer)
     max_duration_snapshot = db.Column(db.Integer)
     checkin_code = db.Column(db.String(50), unique=True)
     code_valid_from = db.Column(db.DateTime)

@@ -76,3 +76,53 @@ class BookingRepository:
     def find_by_checkin_code(checkin_code):
         """Get booking by checkin code"""
         return Booking.query.options(joinedload(Booking.space)).filter_by(checkin_code=checkin_code).first()
+    
+    @staticmethod
+    def count_by_user_id(user_id):
+        """Count total bookings for a specific user"""
+        return Booking.query.filter_by(user_id=user_id).count()
+    
+    @staticmethod
+    def get_by_space_id(space_id):
+        """Get all bookings for a specific space"""
+        return Booking.query.filter_by(space_id=space_id).all()
+    
+    @staticmethod
+    def update_booking_management(booking_id, user_id=None, space_id=None, start_at=None, end_at=None, status=None):
+        """Update booking (superadmin management)"""
+        booking = Booking.query.filter_by(id=booking_id).first()
+        
+        if not booking:
+            return None
+        
+        if user_id is not None:
+            booking.user_id = user_id
+        if space_id is not None:
+            booking.space_id = space_id
+        if start_at is not None:
+            booking.start_at = start_at
+        if end_at is not None:
+            booking.end_at = end_at
+        if status is not None:
+            booking.status = status
+        
+        db.session.commit()
+        db.session.refresh(booking)
+        return booking
+    
+    @staticmethod
+    def delete_booking(booking_id):
+        """Delete booking"""
+        booking = Booking.query.filter_by(id=booking_id).first()
+        
+        if booking:
+            db.session.delete(booking)
+            db.session.commit()
+            return True
+        return False
+    
+    @staticmethod
+    def get_floor_by_id(floor_id):
+        """Get floor by ID (helper for space location)"""
+        from src.models.floor import Floor
+        return Floor.query.filter_by(id=floor_id).first()

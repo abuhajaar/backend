@@ -43,3 +43,7 @@ class UserRepository:
             db.session.commit()
             return True
         return False
+    
+    def count_by_department_id(self, department_id: int) -> int:
+        """Count total users in a specific department"""
+        return User.query.filter_by(department_id=department_id).count()

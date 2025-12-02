@@ -8,6 +8,7 @@ class Blackout(db.Model):
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
     start_at = db.Column(db.DateTime, nullable=False)
     end_at = db.Column(db.DateTime, nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -22,6 +23,7 @@ class Blackout(db.Model):
         return {
             'id': self.id,
             'title': self.title,
+            'description': self.description,
             'start_at': self.start_at.isoformat() if self.start_at else None,
             'end_at': self.end_at.isoformat() if self.end_at else None,
             'created_by': self.created_by,

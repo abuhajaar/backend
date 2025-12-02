@@ -14,7 +14,6 @@ class Space(db.Model):
     location = db.Column(db.Integer, db.ForeignKey('floors.id'), nullable=False)
     opening_hours = db.Column(JSON)  # JSON format untuk jam operasional
     max_duration = db.Column(db.Integer)  # dalam menit
-    buffer_min = db.Column(db.Integer)  # buffer time dalam menit
     status = db.Column(db.String(20), default='available')  # available, booked, in_maintenance
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -36,7 +35,6 @@ class Space(db.Model):
             'location': self.location,
             'opening_hours': self.opening_hours,
             'max_duration': self.max_duration,
-            'buffer_min': self.buffer_min,
             'status': self.status,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None

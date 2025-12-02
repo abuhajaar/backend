@@ -1,16 +1,13 @@
-"""
-Controller untuk Booking
-Menghandle HTTP request/response untuk booking endpoints
-"""
 from flask import request
 from src.usecases.booking_usecase import BookingUseCase
 from src.utils.response_template import ResponseTemplate
 
 class BookingController:
-    """Controller untuk Booking operations"""
+    """Controller to handle Booking operations"""
     
     def __init__(self):
         self.usecase = BookingUseCase()
+        self.response = ResponseTemplate()
     
     def create_booking(self):
         """Handler to create a new booking"""
@@ -21,7 +18,7 @@ class BookingController:
             required_fields = ['user_id', 'space_id', 'start_at', 'end_at']
             for field in required_fields:
                 if field not in data:
-                    return ResponseTemplate.bad_request(
+                    return self.response.bad_request(
                         message=f"Field '{field}' required"
                     )
             
@@ -33,59 +30,62 @@ class BookingController:
                 end_at_str=data['end_at']
             )
             
-            return ResponseTemplate.created(
+            return self.response.created(
                 data=booking,
                 message="Booking created successfully"
             )
             
         except ValueError as e:
-            return ResponseTemplate.bad_request(
+            return self.response.bad_request(
                 message=str(e)
             )
         except Exception as e:
-            return ResponseTemplate.internal_error(
-                message=f"An error occurred: {str(e)}"
+            return self.response.internal_server_error(
+                message=f"Failed to create booking: {str(e)}"
             )
     
     def get_booking_by_id(self, booking_id):
         """Handler to get booking by ID"""
         try:
             booking = self.usecase.get_booking_by_id(booking_id)
-            return ResponseTemplate.success(data=booking)
+            return self.response.success(
+                data=booking,
+                message="Booking retrieved successfully"
+            )
             
         except ValueError as e:
-            return ResponseTemplate.not_found(message=str(e))
+            return self.response.not_found(message=str(e))
         except Exception as e:
-            return ResponseTemplate.internal_error(
-                message=f"An error occurred: {str(e)}"
+            return self.response.internal_server_error(
+                message=f"Failed to retrieve booking: {str(e)}"
             )
     
     def get_all_bookings(self):
         """Handler to get all bookings"""
         try:
             bookings = self.usecase.get_all_bookings()
-            return ResponseTemplate.success(
+            return self.response.success(
                 data=bookings,
-                message=f"Found {len(bookings)} bookings"
+                message="Bookings retrieved successfully"
             )
             
         except Exception as e:
-            return ResponseTemplate.internal_error(
-                message=f"An error occurred: {str(e)}"
+            return self.response.internal_server_error(
+                message=f"Failed to retrieve bookings: {str(e)}"
             )
     
     def get_user_bookings(self, user_id):
         """Handler to get all bookings by user"""
         try:
             bookings = self.usecase.get_user_bookings(user_id)
-            return ResponseTemplate.success(
+            return self.response.success(
                 data=bookings,
-                message=f"Found {len(bookings)} bookings for user {user_id}"
+                message="User bookings retrieved successfully"
             )
             
         except Exception as e:
-            return ResponseTemplate.internal_error(
-                message=f"An error occurred: {str(e)}"
+            return self.response.internal_server_error(
+                message=f"Failed to retrieve user bookings: {str(e)}"
             )
     
     def update_booking_status(self, booking_id):
@@ -95,7 +95,7 @@ class BookingController:
             
             # Validasi required field
             if 'status' not in data:
-                return ResponseTemplate.bad_request(
+                return self.response.bad_request(
                     message="Field 'status' required (checkin, checkout, or cancel)"
                 )
             
@@ -111,21 +111,138 @@ class BookingController:
 
             # Response message based on action
             messages = {
-                'checkin': 'Checkin successful',
-                'checkout': 'Checkout successful',
-                'cancel': 'Booking successfully canceled'
+                'checkin': 'Check-in successful',
+                'checkout': 'Check-out successful',
+                'cancel': 'Booking cancelled successfully'
             }
             
-            return ResponseTemplate.success(
+            return self.response.success(
                 data=booking,
-                message=messages.get(action, 'Booking status successfully updated')
+                message=messages.get(action, 'Booking status updated successfully')
             )
             
         except ValueError as e:
-            return ResponseTemplate.bad_request(
+            return self.response.bad_request(
                 message=str(e)
             )
         except Exception as e:
-            return ResponseTemplate.internal_error(
-                message=f"An error occurred: {str(e)}"
+            return self.response.internal_server_error(
+                message=f"Failed to update booking status: {str(e)}"
+            )
+    
+    # Management endpoints (superadmin only)
+    def get_bookings_for_management(self):
+        """Handler to get all bookings for management"""
+        try:
+            result = self.usecase.get_all_bookings_for_management()
+            if result['success']:
+                return self.response.success(
+                    data=result['data'],
+                    message="Bookings retrieved successfully"
+                )
+            return self.response.internal_server_error(
+                message=result.get('error', 'Failed to retrieve bookings')
+            )
+        except Exception as e:
+            return self.response.internal_server_error(
+                message=f"Failed to retrieve bookings: {str(e)}"
+            )
+    
+    def get_booking_for_management(self, booking_id):
+        """Handler to get booking by ID for management"""
+        try:
+            result = self.usecase.get_booking_for_management(booking_id)
+            if result['success']:
+                return self.response.success(
+                    data=result['data'],
+                    message="Booking retrieved successfully"
+                )
+            return self.response.not_found(
+                message=result.get('error', f'Booking with ID {booking_id} not found')
+            )
+        except Exception as e:
+            return self.response.internal_server_error(
+                message=f"Failed to retrieve booking: {str(e)}"
+            )
+    
+    def create_booking_management(self):
+        """Handler to create booking as superadmin"""
+        try:
+            data = request.get_json()
+            
+            user_id = data.get('user_id') if data else None
+            space_id = data.get('space_id') if data else None
+            start_at = data.get('start_at') if data else None
+            end_at = data.get('end_at') if data else None
+            status = data.get('status', 'active') if data else 'active'
+            
+            result = self.usecase.create_booking_management(
+                user_id=user_id,
+                space_id=space_id,
+                start_at=start_at,
+                end_at=end_at,
+                status=status
+            )
+            
+            if result['success']:
+                return self.response.created(
+                    data=result['data'],
+                    message="Booking created successfully"
+                )
+            return self.response.bad_request(
+                message=result.get('error', 'Failed to create booking')
+            )
+        except Exception as e:
+            return self.response.internal_server_error(
+                message=f"Failed to create booking: {str(e)}"
+            )
+    
+    def update_booking_management(self, booking_id):
+        """Handler to update booking"""
+        try:
+            data = request.get_json()
+            
+            user_id = data.get('user_id') if data else None
+            space_id = data.get('space_id') if data else None
+            start_at = data.get('start_at') if data else None
+            end_at = data.get('end_at') if data else None
+            status = data.get('status') if data else None
+            
+            result = self.usecase.update_booking_management(
+                booking_id=booking_id,
+                user_id=user_id,
+                space_id=space_id,
+                start_at=start_at,
+                end_at=end_at,
+                status=status
+            )
+            
+            if result['success']:
+                return self.response.success(
+                    data=result['data'],
+                    message="Booking updated successfully"
+                )
+            return self.response.bad_request(
+                message=result.get('error', 'Failed to update booking')
+            )
+        except Exception as e:
+            return self.response.internal_server_error(
+                message=f"Failed to update booking: {str(e)}"
+            )
+    
+    def delete_booking(self, booking_id):
+        """Handler to delete booking"""
+        try:
+            result = self.usecase.delete_booking(booking_id)
+            if result['success']:
+                return self.response.success(
+                    data=result.get('data'),
+                    message="Booking deleted successfully"
+                )
+            return self.response.not_found(
+                message=result.get('error', f'Booking with ID {booking_id} not found')
+            )
+        except Exception as e:
+            return self.response.internal_server_error(
+                message=f"Failed to delete booking: {str(e)}"
             )

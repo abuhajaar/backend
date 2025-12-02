@@ -1,107 +1,105 @@
 from flask import request, jsonify
-from src.usecases.user_usecase import UserUseCase
+from src.usecases.floor_usecase import FloorUseCase
 from src.utils.response_template import ResponseTemplate
 
-class UserController:
-    """Controller to handle User requests"""
+class FloorController:
+    """Controller to handle Floor requests"""
     
     def __init__(self):
-        self.user_usecase = UserUseCase()
+        self.floor_usecase = FloorUseCase()
         self.response = ResponseTemplate()
     
-    def get_users(self):
-        """Handler to get all users"""
+    def get_floors(self):
+        """Handler to get all floors"""
         try:
-            result = self.user_usecase.get_all_users()
+            result = self.floor_usecase.get_all_floors()
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="Users retrieved successfully"
+                    message="Floors retrieved successfully"
                 )
             return self.response.internal_server_error(
-                message=result.get('error', 'Failed to retrieve users')
+                message=result.get('error', 'Failed to retrieve floors')
             )
         except Exception as e:
             return self.response.internal_server_error(
-                message=f"Failed to retrieve users: {str(e)}"
+                message=f"Failed to retrieve floors: {str(e)}"
             )
     
-    def get_user(self, user_id):
-        """Handler to get user by ID"""
+    def get_floor(self, floor_id):
+        """Handler to get floor by ID"""
         try:
-            result = self.user_usecase.get_user_by_id(user_id)
+            result = self.floor_usecase.get_floor_by_id(floor_id)
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="User retrieved successfully"
+                    message="Floor retrieved successfully"
                 )
             return self.response.not_found(
-                message=result.get('error', f'User with ID {user_id} not found')
+                message=result.get('error', f'Floor with ID {floor_id} not found')
             )
         except Exception as e:
             return self.response.internal_server_error(
-                message=f"Failed to retrieve user: {str(e)}"
+                message=f"Failed to retrieve floor: {str(e)}"
             )
     
-    def create_user(self):
-        """Handler to create a new user"""
+    def create_floor(self):
+        """Handler to create a new floor"""
         try:
             data = request.get_json()
             
             name = data.get('name') if data else None
-            email = data.get('email') if data else None
             
-            result = self.user_usecase.create_user(name=name, email=email)
+            result = self.floor_usecase.create_floor(name=name)
             
             if result['success']:
                 return self.response.created(
                     data=result['data'],
-                    message="User created successfully"
+                    message="Floor created successfully"
                 )
             return self.response.bad_request(
-                message=result.get('error', 'Failed to create user')
+                message=result.get('error', 'Failed to create floor')
             )
         except Exception as e:
             return self.response.internal_server_error(
-                message=f"Failed to create user: {str(e)}"
+                message=f"Failed to create floor: {str(e)}"
             )
     
-    def update_user(self, user_id):
-        """Handler to update user"""
+    def update_floor(self, floor_id):
+        """Handler to update floor"""
         try:
             data = request.get_json()
             
             name = data.get('name') if data else None
-            email = data.get('email') if data else None
             
-            result = self.user_usecase.update_user(user_id=user_id, name=name, email=email)
+            result = self.floor_usecase.update_floor(floor_id=floor_id, name=name)
             
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="User updated successfully"
+                    message="Floor updated successfully"
                 )
             return self.response.bad_request(
-                message=result.get('error', 'Failed to update user')
+                message=result.get('error', 'Failed to update floor')
             )
         except Exception as e:
             return self.response.internal_server_error(
-                message=f"Failed to update user: {str(e)}"
+                message=f"Failed to update floor: {str(e)}"
             )
     
-    def delete_user(self, user_id):
-        """Handler to delete user"""
+    def delete_floor(self, floor_id):
+        """Handler to delete floor"""
         try:
-            result = self.user_usecase.delete_user(user_id)
+            result = self.floor_usecase.delete_floor(floor_id)
             if result['success']:
                 return self.response.success(
                     data=result.get('data'),
-                    message="User deleted successfully"
+                    message="Floor deleted successfully"
                 )
             return self.response.not_found(
-                message=result.get('error', f'User with ID {user_id} not found')
+                message=result.get('error', f'Floor with ID {floor_id} not found')
             )
         except Exception as e:
             return self.response.internal_server_error(
-                message=f"Failed to delete user: {str(e)}"
+                message=f"Failed to delete floor: {str(e)}"
             )

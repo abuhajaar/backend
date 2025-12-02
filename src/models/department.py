@@ -8,6 +8,7 @@ class Department(db.Model):
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
+    description = db.Column(db.Text, nullable=True)
     manager_id = db.Column(db.Integer, db.ForeignKey('users.id', use_alter=True, name='fk_department_manager'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -24,6 +25,7 @@ class Department(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'description': self.description,
             'manager_id': self.manager_id,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None

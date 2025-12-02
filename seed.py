@@ -23,8 +23,18 @@ def seed_data():
         # Create Departments
         print("\n📁 Creating departments...")
         departments_data = [
-            {'id': 1, 'name': 'Engineering', 'manager_id': None},
-            {'id': 2, 'name': 'People Ops', 'manager_id': None}
+            {
+                'id': 1, 
+                'name': 'Engineering', 
+                'description': 'Responsible for product development, system architecture, and technical innovation',
+                'manager_id': None
+            },
+            {
+                'id': 2, 
+                'name': 'People Ops', 
+                'description': 'Manages recruitment, employee relations, training, and organizational development',
+                'manager_id': None
+            }
         ]
         
         for dept_data in departments_data:
@@ -33,6 +43,7 @@ def seed_data():
                 dept = Department(
                     id=dept_data['id'],
                     name=dept_data['name'],
+                    description=dept_data['description'],
                     manager_id=dept_data['manager_id']
                 )
                 db.session.add(dept)
@@ -144,7 +155,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': f'Hot Desk 1.{i}', 'type': 'hot_desk',
                 'capacity': 1, 'location': 1, 'opening_hours': opening_hours,
-                'max_duration': 480, 'buffer_min': 5, 'status': 'available'
+                'max_duration': 480, 'status': 'available'
             })
             space_id += 1
         
@@ -158,7 +169,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': mr['name'], 'type': 'meeting_room',
                 'capacity': mr['capacity'], 'location': 1, 'opening_hours': opening_hours,
-                'max_duration': 180, 'buffer_min': 15, 'status': 'available'
+                'max_duration': 180, 'status': 'available'
             })
             space_id += 1
         
@@ -167,7 +178,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': f'Private Room 1.{i}', 'type': 'private_room',
                 'capacity': 2, 'location': 1, 'opening_hours': opening_hours,
-                'max_duration': 480, 'buffer_min': 10, 'status': 'available'
+                'max_duration': 480, 'status': 'available'
             })
             space_id += 1
         
@@ -177,7 +188,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': f'Hot Desk 2.{i}', 'type': 'hot_desk',
                 'capacity': 1, 'location': 2, 'opening_hours': opening_hours,
-                'max_duration': 480, 'buffer_min': 5, 'status': 'available'
+                'max_duration': 480, 'status': 'available'
             })
             space_id += 1
         
@@ -191,7 +202,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': mr['name'], 'type': 'meeting_room',
                 'capacity': mr['capacity'], 'location': 2, 'opening_hours': opening_hours,
-                'max_duration': 180, 'buffer_min': 15, 'status': 'available'
+                'max_duration': 180, 'status': 'available'
             })
             space_id += 1
         
@@ -199,7 +210,7 @@ def seed_data():
         spaces_data.append({
             'id': space_id, 'name': 'Private Room 2.1', 'type': 'private_room',
             'capacity': 2, 'location': 2, 'opening_hours': opening_hours,
-            'max_duration': 480, 'buffer_min': 10, 'status': 'available'
+            'max_duration': 480, 'status': 'available'
         })
         space_id += 1
         
@@ -213,7 +224,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': mr['name'], 'type': 'meeting_room',
                 'capacity': mr['capacity'], 'location': 3, 'opening_hours': opening_hours,
-                'max_duration': 240, 'buffer_min': 20, 'status': 'available'
+                'max_duration': 240, 'status': 'available'
             })
             space_id += 1
         
@@ -222,7 +233,7 @@ def seed_data():
             spaces_data.append({
                 'id': space_id, 'name': f'Private Room 3.{i}', 'type': 'private_room',
                 'capacity': 3, 'location': 3, 'opening_hours': opening_hours,
-                'max_duration': 480, 'buffer_min': 10, 'status': 'available'
+                'max_duration': 480, 'status': 'available'
             })
             space_id += 1
         
@@ -344,9 +355,27 @@ def seed_data():
         print("\n🚫 Creating blackouts...")
         blackouts_data = [
             {
-                'id': 1, 'title': 'Libur Nasional',
+                'id': 1, 
+                'title': 'Hari Raya Idul Fitri',
+                'description': 'National holiday celebrating the end of Ramadan. All office spaces are closed.',
                 'start_at': datetime(2025, 4, 10, 0, 0, 0),
-                'end_at': datetime(2025, 4, 11, 0, 0, 0),
+                'end_at': datetime(2025, 4, 11, 23, 59, 59),
+                'created_by': 1
+            },
+            {
+                'id': 2, 
+                'title': 'Independence Day',
+                'description': 'Indonesian Independence Day celebration. All facilities will be closed for the national holiday.',
+                'start_at': datetime(2025, 8, 17, 0, 0, 0),
+                'end_at': datetime(2025, 8, 17, 23, 59, 59),
+                'created_by': 1
+            },
+            {
+                'id': 3, 
+                'title': 'Christmas Holiday',
+                'description': 'Christmas celebration. Office closed for the holiday season.',
+                'start_at': datetime(2025, 12, 25, 0, 0, 0),
+                'end_at': datetime(2025, 12, 25, 23, 59, 59),
                 'created_by': 1
             }
         ]

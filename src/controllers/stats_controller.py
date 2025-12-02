@@ -8,17 +8,18 @@ class StatsController:
     
     def __init__(self):
         self.usecase = StatsUseCase()
+        self.response = ResponseTemplate()
     
     def get_employee_stats(self, user_id):
         """Handler to get employee statistics"""
         try:
             stats = self.usecase.get_employee_stats(user_id)
-            return ResponseTemplate.success(
+            return self.response.success(
                 data=stats,
                 message="Statistics retrieved successfully"
             )
             
         except Exception as e:
-            return ResponseTemplate.internal_error(
-                message=f"An error occurred: {str(e)}"
+            return self.response.internal_server_error(
+                message=f"Failed to retrieve statistics: {str(e)}"
             )
