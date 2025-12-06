@@ -138,12 +138,8 @@ class SpaceUseCase:
             result['unavailable_reason'] = f"Blackout: {blackouts[0].title}"
             return result
         
-        # Check if space is active
-        if space.status != 'available':
-            result['is_available'] = False
-            return result
-        
-        # Check opening hours for the requested time
+        # Check opening hours for the requested time BEFORE status check
+        # Office closed (weekend/holiday) takes priority over individual space status
         day_of_week = requested_start.strftime('%a').lower()[:3]  # mon, tue, wed, etc
         
         open_time = None
@@ -157,9 +153,14 @@ class SpaceUseCase:
         
         day_hours = space.opening_hours.get(day_of_week)
         
-        if not day_hours:  # Closed on this day
+        if not day_hours:  # Closed on this day (e.g., weekend)
             result['is_available'] = False
             result['is_closed'] = True  # Mark as closed
+            return result
+        
+        # Check if space is active
+        if space.status != 'available':
+            result['is_available'] = False
             return result
         
         # Parse opening hours
