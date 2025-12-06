@@ -229,7 +229,7 @@ def seed_data():
             space_id += 1
         
         # Private Rooms
-        for i in range(1, 5):
+        for i in range(1, 7):
             spaces_data.append({
                 'id': space_id, 'name': f'Private Room 3.{i}', 'type': 'private_room',
                 'capacity': 3, 'location': 3, 'opening_hours': opening_hours,
@@ -328,8 +328,8 @@ def seed_data():
             ])
             amenity_id += 6
         
-        # Private Rooms (32-35) - executive amenities
-        for space_id in range(32, 36):
+        # Private Rooms (32-37) - executive amenities
+        for space_id in range(32, 38):
             amenities_data.extend([
                 {'id': amenity_id, 'space_id': space_id, 'name': 'Wi-Fi', 'icon': 'wifi'},
                 {'id': amenity_id + 1, 'space_id': space_id, 'name': 'Monitor', 'icon': 'monitor'},

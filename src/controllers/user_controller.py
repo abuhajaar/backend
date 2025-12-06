@@ -48,10 +48,23 @@ class UserController:
         try:
             data = request.get_json()
             
-            name = data.get('name') if data else None
+            username = data.get('username') if data else None
             email = data.get('email') if data else None
+            password = data.get('password') if data else None
+            phone = data.get('phone') if data else None
+            role = data.get('role', 'employee') if data else 'employee'
+            department_id = data.get('department_id') if data else None
+            status = data.get('status', True) if data else True
             
-            result = self.user_usecase.create_user(name=name, email=email)
+            result = self.user_usecase.create_user(
+                username=username,
+                email=email,
+                password=password,
+                phone=phone,
+                role=role,
+                department_id=department_id,
+                status=status
+            )
             
             if result['success']:
                 return self.response.created(
@@ -71,10 +84,24 @@ class UserController:
         try:
             data = request.get_json()
             
-            name = data.get('name') if data else None
+            username = data.get('username') if data else None
             email = data.get('email') if data else None
+            password = data.get('password') if data else None
+            phone = data.get('phone') if data else None
+            role = data.get('role') if data else None
+            department_id = data.get('department_id') if data else None
+            status = data.get('status') if data else None
             
-            result = self.user_usecase.update_user(user_id=user_id, name=name, email=email)
+            result = self.user_usecase.update_user(
+                user_id=user_id,
+                username=username,
+                email=email,
+                password=password,
+                phone=phone,
+                role=role,
+                department_id=department_id,
+                status=status
+            )
             
             if result['success']:
                 return self.response.success(

@@ -16,7 +16,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="Blackouts retrieved successfully"
+                    message="Blackouts berhasil diambil"
                 )
             return self.response.internal_server_error(
                 message=result.get('error', 'Failed to retrieve blackouts')
@@ -33,7 +33,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="Blackout retrieved successfully"
+                    message="Blackout berhasil diambil"
                 )
             return self.response.not_found(
                 message=result.get('error', f'Blackout with ID {blackout_id} not found')
@@ -65,7 +65,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.created(
                     data=result['data'],
-                    message="Blackout created successfully"
+                    message="Blackout berhasil dibuat"
                 )
             return self.response.bad_request(
                 message=result.get('error', 'Failed to create blackout')
@@ -96,7 +96,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="Blackout updated successfully"
+                    message="Blackout berhasil diupdate"
                 )
             return self.response.bad_request(
                 message=result.get('error', 'Failed to update blackout')
@@ -113,7 +113,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.success(
                     data=result.get('data'),
-                    message="Blackout deleted successfully"
+                    message="Blackout berhasil dihapus"
                 )
             return self.response.not_found(
                 message=result.get('error', f'Blackout with ID {blackout_id} not found')

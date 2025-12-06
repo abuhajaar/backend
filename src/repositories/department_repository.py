@@ -20,16 +20,16 @@ class DepartmentRepository:
         return Department.query.filter_by(name=name).first()
     
     @staticmethod
-    def create(name, manager_id=None, description=None):
+    def create(name, description=None):
         """Create new department"""
-        department = Department(name=name, manager_id=manager_id, description=description)
+        department = Department(name=name, description=description)
         db.session.add(department)
         db.session.commit()
         db.session.refresh(department)
         return department
     
     @staticmethod
-    def update(department_id, name=None, manager_id=None, description=None):
+    def update(department_id, name=None, description=None):
         """Update department"""
         department = Department.query.filter_by(id=department_id).first()
         
@@ -38,11 +38,22 @@ class DepartmentRepository:
         
         if name is not None:
             department.name = name
-        if manager_id is not None:
-            department.manager_id = manager_id
         if description is not None:
             department.description = description
         
+        db.session.commit()
+        db.session.refresh(department)
+        return department
+    
+    @staticmethod
+    def update_manager(department_id, manager_id):
+        """Update department manager_id (can be None to unassign)"""
+        department = Department.query.filter_by(id=department_id).first()
+        
+        if not department:
+            return None
+        
+        department.manager_id = manager_id
         db.session.commit()
         db.session.refresh(department)
         return department

@@ -237,7 +237,7 @@ class BookingController:
             if result['success']:
                 return self.response.success(
                     data=result.get('data'),
-                    message="Booking deleted successfully"
+                    message="Booking berhasil dihapus"
                 )
             return self.response.not_found(
                 message=result.get('error', f'Booking with ID {booking_id} not found')

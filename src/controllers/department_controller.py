@@ -49,12 +49,10 @@ class DepartmentController:
             data = request.get_json()
             
             name = data.get('name') if data else None
-            manager_id = data.get('manager_id') if data else None
             description = data.get('description') if data else None
             
             result = self.department_usecase.create_department(
                 name=name, 
-                manager_id=manager_id, 
                 description=description
             )
             
@@ -77,13 +75,11 @@ class DepartmentController:
             data = request.get_json()
             
             name = data.get('name') if data else None
-            manager_id = data.get('manager_id') if data else None
             description = data.get('description') if data else None
             
             result = self.department_usecase.update_department(
                 department_id=department_id, 
-                name=name, 
-                manager_id=manager_id,
+                name=name,
                 description=description
             )
             

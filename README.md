@@ -471,36 +471,70 @@ For complete guide, see [COOLIFY.md](COOLIFY.md).
   - Delete user
   - Response: `{ success: true, message: string }`
 
-### Spaces (Protected)
+### Spaces
+#### User Endpoints (Protected - Employee, Admin, Manager)
 - **GET** `/api/spaces` (Protected)
   - Get all spaces with optional availability filter
   - Headers: `Authorization: Bearer <token>`
   - Query params: `date` (YYYY-MM-DD), `start_time` (HH:MM), `end_time` (HH:MM)
-  - Response: `{ success: true, data: [...] }`
-  - Space includes: `id`, `name`, `type`, `capacity`, `location`, `opening_hours`, `max_duration`, `buffer_min`, `status`, `amenities`, `is_available`, `available_hours`
+  - Response: `{ success: true, data: [...], message: "...", status_code: 200 }`
+  - Space includes: `id`, `name`, `type`, `capacity`, `location`, `opening_hours`, `max_duration`, `status`, `amenities`, `is_available`, `available_hours`
+  - Availability logic:
+    - Without `date`: Returns all spaces without availability info
+    - With `date` only: Returns spaces with `available_hours` for that day
+    - With `date`, `start_time`, `end_time`: Returns only available spaces for that time slot
+    - Checks: Opening hours, blackout dates, existing bookings, time conflicts
 
 - **GET** `/api/spaces/:id` (Protected)
-  - Get space by ID
+  - Get space by ID with detailed information
   - Headers: `Authorization: Bearer <token>`
   - Response: `{ success: true, data: {...} }`
 
-### Bookings (Protected)
+#### Management Endpoints (Protected - Superadmin Only)
+- **GET** `/api/spaces/manage` (Superadmin)
+  - Get all spaces for management
+  - Headers: `Authorization: Bearer <token>`
+  - Response: `{ success: true, data: [...], message: "...", status_code: 200 }`
+  - Returns all spaces with floor and amenity details
+
+- **GET** `/api/spaces/manage/:id` (Superadmin)
+  - Get space by ID for management
+  - Headers: `Authorization: Bearer <token>`
+  - Response: `{ success: true, data: {...} }`
+
+- **PUT** `/api/spaces/manage/:id` (Superadmin)
+  - Update space status only
+  - Headers: `Authorization: Bearer <token>`
+  - Body: `{ status: "available" | "booked" | "in_maintenance" }`
+  - Response: `{ success: true, data: {...}, message: "Status space berhasil diupdate", status_code: 200 }`
+  - Note: Superadmin can only change space status. Space creation/deletion is managed via seed data.
+
+### Bookings
+#### User Endpoints (Protected - Employee, Admin, Manager)
 - **POST** `/api/bookings` (Protected)
   - Create new booking
   - Headers: `Authorization: Bearer <token>`
   - Body: `{ user_id: number, space_id: number, start_at: "YYYY-MM-DD HH:MM:SS", end_at: "YYYY-MM-DD HH:MM:SS" }`
-  - Response: `{ success: true, data: {...}, message: "Booking berhasil dibuat" }`
+  - Response: `{ success: true, data: {...}, message: "Booking berhasil dibuat", status_code: 201 }`
   - Returns: booking with `checkin_code` (CHK-XXXXXXXX)
-
-- **GET** `/api/bookings` (Protected)
-  - Get all bookings
-  - Headers: `Authorization: Bearer <token>`
-  - Response: `{ success: true, data: [...] }`
+  - Validation:
+    - Start time must be before end time
+    - Cannot book in the past
+    - Space must be available
+    - Checks blackout dates
+    - Checks opening hours
+    - Validates max duration
+    - Checks time conflicts with existing bookings
 
 - **GET** `/api/bookings/:id` (Protected)
   - Get booking by ID
   - Headers: `Authorization: Bearer <token>`
   - Response: `{ success: true, data: {...} }`
+
+- **GET** `/api/bookings` (Protected)
+  - Get all bookings
+  - Headers: `Authorization: Bearer <token>`
+  - Response: `{ success: true, data: [...] }`
 
 - **GET** `/api/bookings/user/:user_id` (Protected)
   - Get all bookings by user
@@ -511,9 +545,34 @@ For complete guide, see [COOLIFY.md](COOLIFY.md).
   - Update booking status (checkin, checkout, cancel)
   - Headers: `Authorization: Bearer <token>`
   - Body for **checkin**: `{ status: "checkin", checkin_code: "CHK-XXXXXXXX" }`
+    - Code must be valid (15 min before start_at to 15 min after end_at)
+    - Changes status from 'active' to 'checkin'
+    - Records checkin_at timestamp
   - Body for **checkout**: `{ status: "checkout" }`
+    - Changes status from 'checkin' to 'finished'
+    - Records checkout_at timestamp
   - Body for **cancel**: `{ status: "cancel" }`
-  - Response: `{ success: true, data: {...}, message: "..." }`
+    - Changes status to 'cancelled'
+  - Response: `{ success: true, data: {...}, message: "...", status_code: 200 }`
+
+#### Management Endpoints (Protected - Superadmin Only)
+- **GET** `/api/bookings/manage` (Superadmin)
+  - Get all bookings for management
+  - Headers: `Authorization: Bearer <token>`
+  - Response: `{ success: true, data: [...], message: "...", status_code: 200 }`
+  - Returns bookings with user info (username, email) and floor info
+
+- **GET** `/api/bookings/manage/:id` (Superadmin)
+  - Get booking by ID for management
+  - Headers: `Authorization: Bearer <token>`
+  - Response: `{ success: true, data: {...} }`
+  - Returns booking with user info and floor info
+
+- **DELETE** `/api/bookings/manage/:id` (Superadmin)
+  - Delete booking (hard delete)
+  - Headers: `Authorization: Bearer <token>`
+  - Response: `{ success: true, message: "Booking berhasil dihapus", status_code: 200 }`
+  - Note: Superadmin can only delete bookings for cleanup purposes. Users own their booking lifecycle (create, checkin, checkout, cancel).
 
 ### Statistics (Protected)
 - **GET** `/api/stats_employee/:user_id` (Protected)
@@ -578,7 +637,6 @@ For complete guide, see [COOLIFY.md](COOLIFY.md).
 - `location` - Integer (Foreign Key to floors.id)
 - `opening_hours` - JSON - {mon: {start: "08:00", end: "18:00"}, ...}
 - `max_duration` - Integer (minutes)
-- `buffer_min` - Integer (buffer time in minutes)
 - `status` - String(20, Default='available') - available, booked, in_maintenance
 - `created_at` - DateTime
 - `updated_at` - DateTime
@@ -606,7 +664,6 @@ For complete guide, see [COOLIFY.md](COOLIFY.md).
 - `status` - String(20, Default='active') - active, checkin, finished, cancelled
 - `start_at` - DateTime
 - `end_at` - DateTime
-- `buffer_min_snapshot` - Integer
 - `max_duration_snapshot` - Integer
 - `checkin_code` - String(50, Unique) - CHK-XXXXXXXX
 - `code_valid_from` - DateTime - 15 min before start_at
@@ -685,27 +742,139 @@ backend/
 - Definisi endpoint dan HTTP methods
 - Mapping URL ke controller functions
 - Menggunakan Flask Blueprint
+- Authentication decorators (@token_required, @role_required)
 
 ### 2. **Controllers** (Presentation Layer)
 - Menangani HTTP requests dan responses
 - Validasi input dasar
 - Memanggil UseCase untuk business logic
-- Format response
+- Format response menggunakan ResponseTemplate
+- Standardized responses: `{ success: bool, data: any, message: string, status_code: int }`
 
 ### 3. **UseCases** (Business Logic Layer)
 - Berisi business logic dan rules
 - Orchestrate flow data antara controllers dan repositories
 - Validasi business rules
+- Space availability checking
+- Booking conflict detection
+- Returns: `{ success: bool, data: any, error: string }`
 
 ### 4. **Repositories** (Data Access Layer)
 - Menangani semua operasi database
 - Abstraksi untuk data persistence
 - CRUD operations
+- Consistent naming: get_by_id(), get_all_*(), create(), update(), delete()
 
 ### 5. **Models** (Entity Layer)
 - Definisi struktur data
 - Database schema
-- Data transformation methods
+- Data transformation methods (to_dict())
+- Relationships between entities
+
+## Key Features
+
+### Space Availability System
+The system implements comprehensive availability checking:
+
+1. **Opening Hours Validation**
+   - Stored as JSON per space: `{mon: {start: "08:00", end: "18:00"}, ...}`
+   - Day-specific schedules (different hours for each day)
+   - Closed days handled (e.g., weekends)
+
+2. **Blackout Dates**
+   - System-wide blackout dates (holidays, maintenance)
+   - Prevents bookings during blackout periods
+
+3. **Conflict Detection**
+   - Checks existing bookings for time overlaps
+   - Direct time conflict check (no buffer)
+   - Prevents double-booking
+
+4. **Available Hours Calculation**
+   - Computes free time slots within opening hours
+   - Excludes existing bookings
+   - Returns array of available time ranges: `[{start: "HH:MM", end: "HH:MM"}, ...]`
+
+### Booking Workflow
+
+1. **Creation**
+   - Validates time order (start < end)
+   - Checks not in the past
+   - Validates space availability
+   - Checks blackout dates
+   - Validates opening hours
+   - Checks max duration limit
+   - Detects conflicts
+   - Generates unique checkin code (CHK-XXXXXXXX)
+   - Sets code validity window (15 min before to 15 min after)
+
+2. **Check-in**
+   - Validates checkin code
+   - Checks code validity time window
+   - Changes status: active → checkin
+   - Records checkin_at timestamp
+
+3. **Checkout**
+   - Changes status: checkin → finished
+   - Records checkout_at timestamp
+
+4. **Cancellation**
+   - Changes status to cancelled
+   - Frees up the time slot
+
+### Role-Based Access Control
+
+- **Employee**: Can view spaces, create bookings, check-in/out, cancel own bookings
+- **Admin**: Same as employee (future: department management)
+- **Manager**: Same as employee (future: department oversight)
+- **Superadmin**: Limited management access via `/manage` endpoints:
+  - Spaces: View all, update status only
+  - Bookings: View all, delete only
+  - Users: Full CRUD
+  - Departments: Full CRUD
+
+### Management Endpoints
+
+Superadmin-only endpoints with limited administrative access:
+- `/api/spaces/manage/*` - View all spaces, update status only (available, booked, in_maintenance)
+- `/api/bookings/manage/*` - View all bookings, delete only (cleanup purposes)
+- Space creation/deletion managed via seed data
+- Users own their booking lifecycle (create, checkin, checkout, cancel)
+- Enhanced data with relationships (user info, floor info)
+
+## API Response Format
+
+All endpoints return standardized responses:
+
+**Success:**
+```json
+{
+  "success": true,
+  "data": {...} or [...],
+  "message": "Operation completed successfully",
+  "status_code": 200
+}
+```
+
+**Error:**
+```json
+{
+  "success": false,
+  "error": "Error description",
+  "message": "User-friendly error message",
+  "status_code": 400
+}
+```
+
+## Error Handling
+
+Global error handlers for:
+- 404 Not Found
+- 405 Method Not Allowed
+- 500 Internal Server Error
+- JWT Authentication Errors
+- Validation Errors
+- Database Errors
 
 ## Development
 

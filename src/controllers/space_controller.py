@@ -117,40 +117,28 @@ class SpaceController:
             )
     
     def update_space(self, space_id):
-        """Handler to update space"""
+        """Handler to update space status"""
         try:
             data = request.get_json()
             
-            name = data.get('name') if data else None
-            type = data.get('type') if data else None
-            capacity = data.get('capacity') if data else None
-            location = data.get('location') if data else None
-            opening_hours = data.get('opening_hours') if data else None
-            max_duration = data.get('max_duration') if data else None
             status = data.get('status') if data else None
             
             result = self.space_usecase.update_space(
                 space_id=space_id,
-                name=name,
-                type=type,
-                capacity=capacity,
-                location=location,
-                opening_hours=opening_hours,
-                max_duration=max_duration,
                 status=status
             )
             
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="Space updated successfully"
+                    message="Status space updated successfully"
                 )
             return self.response.bad_request(
-                message=result.get('error', 'Failed to update space')
+                message=result.get('error', 'Failed to update space status')
             )
         except Exception as e:
             return self.response.internal_server_error(
-                message=f"Failed to update space: {str(e)}"
+                message=f"Failed to update space status: {str(e)}"
             )
     
     def delete_space(self, space_id):

@@ -49,8 +49,22 @@ class SpaceRepository:
         return space
     
     @staticmethod
+    def update_status(space_id, status):
+        """Update space status only"""
+        space = Space.query.filter_by(id=space_id).first()
+        
+        if not space:
+            return None
+        
+        space.status = status
+        
+        db.session.commit()
+        db.session.refresh(space)
+        return space
+    
+    @staticmethod
     def update(space_id, name=None, type=None, capacity=None, location=None, opening_hours=None, max_duration=None, status=None):
-        """Update space"""
+        """Update space (deprecated - used only by seed)"""
         space = Space.query.filter_by(id=space_id).first()
         
         if not space:

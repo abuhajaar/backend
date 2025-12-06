@@ -5,6 +5,7 @@ from src.repositories.floor_repository import FloorRepository
 from src.repositories.amenity_repository import AmenityRepository
 from src.repositories.booking_repository import BookingRepository
 from src.repositories.user_repository import UserRepository
+from src.repositories.blackout_repository import BlackoutRepository
 
 class SpaceUseCase:
     """Use case for Space business logic"""
@@ -15,6 +16,7 @@ class SpaceUseCase:
         self.amenity_repository = AmenityRepository()
         self.booking_repository = BookingRepository()
         self.user_repository = UserRepository()
+        self.blackout_repository = BlackoutRepository()
     
     def get_all_spaces(self, date=None, start_time=None, end_time=None):
         """Get all spaces with floor name dan amenities"""
@@ -127,6 +129,14 @@ class SpaceUseCase:
             'outside_hours': False,
             'unavailable_reason': None
         }
+        
+        # Check blackout dates FIRST - office closed means no spaces available
+        blackouts = self.blackout_repository.get_active_blackouts(check_date)
+        if blackouts:
+            result['is_available'] = False
+            result['is_closed'] = True
+            result['unavailable_reason'] = f"Blackout: {blackouts[0].title}"
+            return result
         
         # Check if space is active
         if space.status != 'available':
@@ -435,56 +445,29 @@ class SpaceUseCase:
                 'error': str(e)
             }
     
-    def update_space(self, space_id, name=None, type=None, capacity=None, location=None, opening_hours=None, max_duration=None, status=None):
-        """Update space"""
+    def update_space(self, space_id, status=None):
+        """Update space status only"""
         from src.config.database import db
         
         try:
-            # Validate type if provided
-            if type is not None:
-                valid_types = ['hot_desk', 'private_room', 'meeting_room']
-                if type not in valid_types:
-                    return {
-                        'success': False,
-                        'error': f'Invalid type. Must be one of: {", ".join(valid_types)}'
-                    }
+            # Validate status is provided
+            if status is None:
+                return {
+                    'success': False,
+                    'error': 'Status is required'
+                }
             
-            # Validate status if provided
-            if status is not None:
-                valid_statuses = ['available', 'booked', 'in_maintenance']
-                if status not in valid_statuses:
-                    return {
-                        'success': False,
-                        'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'
-                    }
-            
-            # Validate floor exists if location is provided
-            if location is not None:
-                floor = self.floor_repository.get_by_id(location)
-                if not floor:
-                    return {
-                        'success': False,
-                        'error': 'Floor not found'
-                    }
-            
-            # Check if new name already exists (if name is being changed)
-            if name is not None:
-                existing_space = self.space_repository.get_by_name(name)
-                if existing_space and existing_space.id != space_id:
-                    return {
-                        'success': False,
-                        'error': 'Space with this name already exists'
-                    }
+            # Validate status
+            valid_statuses = ['available', 'maintenance']
+            if status not in valid_statuses:
+                return {
+                    'success': False,
+                    'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'
+                }
             
             # Update space
-            updated_space = self.space_repository.update(
+            updated_space = self.space_repository.update_status(
                 space_id=space_id,
-                name=name,
-                type=type,
-                capacity=capacity,
-                location=location,
-                opening_hours=opening_hours,
-                max_duration=max_duration,
                 status=status
             )
             

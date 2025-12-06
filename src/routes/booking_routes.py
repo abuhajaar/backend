@@ -50,7 +50,7 @@ def update_booking_status(booking_id):
 ###############################################################################
 
 
-# Management endpoints (superadmin only)
+# Management endpoints (superadmin only) - Read and Delete Only
 @booking_bp.route('/manage', methods=['GET'])
 @token_required
 @role_required(['superadmin'])
@@ -70,26 +70,6 @@ def get_booking_for_management(booking_id):
     Get booking by ID for management (superadmin only)
     """
     return controller.get_booking_for_management(booking_id)
-
-@booking_bp.route('/manage', methods=['POST'])
-@token_required
-@role_required(['superadmin'])
-def create_booking_management():
-    """
-    POST /api/bookings/manage
-    Create new booking as superadmin (bypass some validations if needed)
-    """
-    return controller.create_booking_management()
-
-@booking_bp.route('/manage/<int:booking_id>', methods=['PUT'])
-@token_required
-@role_required(['superadmin'])
-def update_booking_management(booking_id):
-    """
-    PUT /api/bookings/manage/:id
-    Update booking (superadmin only)
-    """
-    return controller.update_booking_management(booking_id)
 
 @booking_bp.route('/manage/<int:booking_id>', methods=['DELETE'])
 @token_required

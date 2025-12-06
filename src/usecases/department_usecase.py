@@ -87,7 +87,7 @@ class DepartmentUseCase:
                 'error': str(e)
             }
     
-    def create_department(self, name: str, manager_id: int = None, description: str = None) -> Dict:
+    def create_department(self, name: str, description: str = None) -> Dict:
         """Create a new department"""
         try:
             # Validasi input
@@ -105,36 +105,15 @@ class DepartmentUseCase:
                     'error': 'Department name already exists'
                 }
             
-            # Validasi manager_id jika ada
-            if manager_id:
-                manager = self.user_repository.get_by_id(manager_id)
-                if not manager:
-                    return {
-                        'success': False,
-                        'error': 'Manager not found'
-                    }
-            
             # Buat department baru
             new_department = self.department_repository.create(
                 name=name, 
-                manager_id=manager_id, 
                 description=description
             )
             department_data = new_department.to_dict()
             department_data['total_users'] = 0
-            
-            # Get manager info
-            if manager_id:
-                manager = self.user_repository.get_by_id(manager_id)
-                if manager:
-                    department_data['manager_name'] = manager.username
-                    department_data['manager_email'] = manager.email
-                else:
-                    department_data['manager_name'] = None
-                    department_data['manager_email'] = None
-            else:
-                department_data['manager_name'] = None
-                department_data['manager_email'] = None
+            department_data['manager_name'] = None
+            department_data['manager_email'] = None
             
             return {
                 'success': True,
@@ -147,11 +126,11 @@ class DepartmentUseCase:
                 'error': str(e)
             }
     
-    def update_department(self, department_id: int, name: str = None, manager_id: int = None, description: str = None) -> Dict:
+    def update_department(self, department_id: int, name: str = None, description: str = None) -> Dict:
         """Update department"""
         try:
             # Cek apakah nama baru sudah digunakan department lain
-            if name:
+            if name is not None:
                 existing_department = self.department_repository.get_by_name(name)
                 if existing_department and existing_department.id != department_id:
                     return {
@@ -159,19 +138,9 @@ class DepartmentUseCase:
                         'error': 'Department name already exists'
                     }
             
-            # Validasi manager_id jika ada
-            if manager_id:
-                manager = self.user_repository.get_by_id(manager_id)
-                if not manager:
-                    return {
-                        'success': False,
-                        'error': 'Manager not found'
-                    }
-            
             department = self.department_repository.update(
                 department_id, 
                 name=name, 
-                manager_id=manager_id, 
                 description=description
             )
             if department:
