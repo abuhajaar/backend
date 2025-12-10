@@ -65,7 +65,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.created(
                     data=result['data'],
-                    message="Blackout berhasil dibuat"
+                    message="Blackout created successfully"
                 )
             return self.response.bad_request(
                 message=result.get('error', 'Failed to create blackout')
@@ -96,7 +96,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.success(
                     data=result['data'],
-                    message="Blackout berhasil diupdate"
+                    message="Blackout updated successfully"
                 )
             return self.response.bad_request(
                 message=result.get('error', 'Failed to update blackout')
@@ -113,7 +113,7 @@ class BlackoutController:
             if result['success']:
                 return self.response.success(
                     data=result.get('data'),
-                    message="Blackout berhasil dihapus"
+                    message="Blackout deleted successfully"
                 )
             return self.response.not_found(
                 message=result.get('error', f'Blackout with ID {blackout_id} not found')

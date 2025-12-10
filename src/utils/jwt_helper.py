@@ -36,7 +36,7 @@ def decode_access_token(token: str):
         return None
 
 def token_required(f):
-    """Decorator untuk validasi JWT token"""
+    """Decorator to validate JWT token"""
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -78,7 +78,7 @@ def token_required(f):
     return decorated
 
 def role_required(allowed_roles: list):
-    """Decorator untuk validasi role user"""
+    """Decorator to validate user role"""
     def decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
