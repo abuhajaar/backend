@@ -72,3 +72,7 @@ class UserRepository:
     def count_by_department_id(self, department_id: int) -> int:
         """Count total users in a specific department"""
         return User.query.filter_by(department_id=department_id).count()
+    
+    def get_by_department_id(self, department_id: int) -> List[User]:
+        """Get all users from a specific department"""
+        return User.query.filter_by(department_id=department_id).order_by(User.username).all()

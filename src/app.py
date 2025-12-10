@@ -12,6 +12,7 @@ from src.routes.department_routes import department_routes
 from src.routes.floor_routes import floor_routes
 from src.routes.amenity_routes import amenity_routes
 from src.routes.blackout_routes import blackout_routes
+from src.routes.announcement_routes import announcement_routes
 from src.utils.error_handlers import register_error_handlers
 
 # Import all models so SQLAlchemy creates the tables
@@ -22,6 +23,9 @@ from src.models.space import Space
 from src.models.amenity import Amenity
 from src.models.blackout import Blackout
 from src.models.booking import Booking
+from src.models.announcement import Announcement
+from src.models.assignment import Assignment
+from src.models.task import Task
 
 def create_app():
     """Application factory untuk membuat Flask app"""
@@ -43,6 +47,7 @@ def create_app():
     app.register_blueprint(floor_routes, url_prefix='/api/floors')
     app.register_blueprint(amenity_routes, url_prefix='/api/amenities')
     app.register_blueprint(blackout_routes, url_prefix='/api/blackouts')
+    app.register_blueprint(announcement_routes, url_prefix='/api/announcements')
     app.register_blueprint(space_routes, url_prefix='/api/spaces')
     app.register_blueprint(booking_bp, url_prefix='/api/bookings')
     app.register_blueprint(stats_bp, url_prefix='/api/stats_employee')

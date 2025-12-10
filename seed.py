@@ -13,6 +13,9 @@ from src.models.space import Space
 from src.models.amenity import Amenity
 from src.models.blackout import Blackout
 from src.models.booking import Booking
+from src.models.announcement import Announcement
+from src.models.assignment import Assignment
+from src.models.task import Task
 
 def seed_data():
     app = create_app()
@@ -406,6 +409,198 @@ def seed_data():
         
         db.session.commit()
         
+        # Create Announcements
+        print("\n📢 Creating announcements...")
+        announcements_data = [
+            {
+                'id': 1,
+                'title': 'Welcome to OpenBO!',
+                'description': 'We are excited to introduce our new office booking system. Book your workspace easily and efficiently.',
+                'created_by': 1,  # superadmin
+                'department_id': None,  # Company-wide announcement
+                'created_at': datetime(2025, 12, 1, 9, 0, 0)
+            },
+            {
+                'id': 2,
+                'title': 'Engineering Team Meeting',
+                'description': 'All engineering team members are invited to the quarterly planning meeting on Friday at 2 PM in Meeting Room 3.1.',
+                'created_by': 2,  # eng_manager
+                'department_id': 1,  # Engineering department only
+                'created_at': datetime(2025, 12, 5, 10, 30, 0)
+            },
+            {
+                'id': 3,
+                'title': 'New Workspace Guidelines',
+                'description': 'Please ensure you check out from your workspace after use. Clean desk policy is now in effect.',
+                'created_by': 1,  # superadmin
+                'department_id': None,  # Company-wide
+                'created_at': datetime(2025, 12, 7, 14, 0, 0)
+            },
+            {
+                'id': 4,
+                'title': 'HR Department Updates',
+                'description': 'Important updates regarding employee benefits and year-end review process. Please check your email for details.',
+                'created_by': 3,  # hr_manager
+                'department_id': 2,  # People Ops department only
+                'created_at': datetime(2025, 12, 8, 11, 15, 0)
+            },
+            {
+                'id': 5,
+                'title': 'Holiday Office Hours',
+                'description': 'Office will operate on reduced hours during the holiday season. Check the blackout dates for office closures.',
+                'created_by': 1,  # superadmin
+                'department_id': None,  # Company-wide
+                'created_at': datetime(2025, 12, 9, 8, 0, 0)
+            }
+        ]
+        
+        for announcement_data in announcements_data:
+            announcement = Announcement.query.filter_by(id=announcement_data['id']).first()
+            if not announcement:
+                announcement = Announcement(**announcement_data)
+                db.session.add(announcement)
+                dept_text = f"Dept {announcement.department_id}" if announcement.department_id else "Company-wide"
+                print(f"✅ Created announcement: {announcement.title} ({dept_text})")
+            else:
+                print(f"⚠️  Announcement already exists: {announcement.title}")
+        
+        db.session.commit()
+        
+        # Create Assignments
+        print("\n📋 Creating assignments...")
+        assignments_data = [
+            {
+                'id': 1,
+                'title': 'Q4 Product Roadmap Planning',
+                'description': 'Develop and finalize the product roadmap for Q4 2025. Include feature prioritization, timeline estimation, and resource allocation.',
+                'created_by': 2,  # eng_manager
+                'department_id': 1,  # Engineering
+                'due_date': datetime(2025, 12, 20, 17, 0, 0),
+                'created_at': datetime(2025, 12, 1, 9, 0, 0)
+            },
+            {
+                'id': 2,
+                'title': 'Employee Onboarding Process Review',
+                'description': 'Review and update the employee onboarding process. Gather feedback from recent hires and improve documentation.',
+                'created_by': 3,  # hr_manager
+                'department_id': 2,  # People Ops
+                'due_date': datetime(2025, 12, 15, 17, 0, 0),
+                'created_at': datetime(2025, 12, 2, 10, 0, 0)
+            },
+            {
+                'id': 3,
+                'title': 'Code Review Best Practices Workshop',
+                'description': 'Organize and conduct a workshop on code review best practices. Prepare presentation materials and practical exercises.',
+                'created_by': 2,  # eng_manager
+                'department_id': 1,  # Engineering
+                'due_date': datetime(2025, 12, 18, 14, 0, 0),
+                'created_at': datetime(2025, 12, 5, 11, 30, 0)
+            }
+        ]
+        
+        for assignment_data in assignments_data:
+            assignment = Assignment.query.filter_by(id=assignment_data['id']).first()
+            if not assignment:
+                assignment = Assignment(**assignment_data)
+                db.session.add(assignment)
+                print(f"✅ Created assignment: {assignment.title} (Dept {assignment.department_id})")
+            else:
+                print(f"⚠️  Assignment already exists: {assignment.title}")
+        
+        db.session.commit()
+        
+        # Create Tasks
+        print("\n✅ Creating tasks...")
+        tasks_data = [
+            # Tasks for Assignment 1 (Q4 Product Roadmap)
+            {
+                'id': 1,
+                'title': 'Research competitor features',
+                'priority': 'high',
+                'assignment_id': 1,
+                'user_id': 4,  # budi
+                'is_done': True
+            },
+            {
+                'id': 2,
+                'title': 'Draft feature prioritization matrix',
+                'priority': 'high',
+                'assignment_id': 1,
+                'user_id': 4,  # budi
+                'is_done': False
+            },
+            {
+                'id': 3,
+                'title': 'Create timeline estimates',
+                'priority': 'medium',
+                'assignment_id': 1,
+                'user_id': 4,  # budi
+                'is_done': False
+            },
+            # Tasks for Assignment 2 (Onboarding Review)
+            {
+                'id': 4,
+                'title': 'Survey recent hires',
+                'priority': 'high',
+                'assignment_id': 2,
+                'user_id': 5,  # sari
+                'is_done': True
+            },
+            {
+                'id': 5,
+                'title': 'Analyze feedback data',
+                'priority': 'medium',
+                'assignment_id': 2,
+                'user_id': 5,  # sari
+                'is_done': True
+            },
+            {
+                'id': 6,
+                'title': 'Update onboarding documentation',
+                'priority': 'high',
+                'assignment_id': 2,
+                'user_id': 5,  # sari
+                'is_done': False
+            },
+            # Tasks for Assignment 3 (Workshop)
+            {
+                'id': 7,
+                'title': 'Prepare presentation slides',
+                'priority': 'high',
+                'assignment_id': 3,
+                'user_id': 4,  # budi
+                'is_done': False
+            },
+            {
+                'id': 8,
+                'title': 'Create hands-on exercises',
+                'priority': 'medium',
+                'assignment_id': 3,
+                'user_id': 4,  # budi
+                'is_done': False
+            },
+            {
+                'id': 9,
+                'title': 'Book meeting room',
+                'priority': 'low',
+                'assignment_id': 3,
+                'user_id': 4,  # budi
+                'is_done': True
+            }
+        ]
+        
+        for task_data in tasks_data:
+            task = Task.query.filter_by(id=task_data['id']).first()
+            if not task:
+                task = Task(**task_data)
+                db.session.add(task)
+                status = "✓ Done" if task.is_done else "○ Pending"
+                print(f"✅ Created task: {task.title} [{status}] (User {task.user_id})")
+            else:
+                print(f"⚠️  Task already exists: {task.title}")
+        
+        db.session.commit()
+        
         print("\n✨ Database seeding completed!")
         print("\n📝 Summary:")
         print(f"   - Departments: {Department.query.count()}")
@@ -415,6 +610,9 @@ def seed_data():
         print(f"   - Amenities: {Amenity.query.count()}")
         print(f"   - Blackouts: {Blackout.query.count()}")
         print(f"   - Bookings: {Booking.query.count()}")
+        print(f"   - Announcements: {Announcement.query.count()}")
+        print(f"   - Assignments: {Assignment.query.count()}")
+        print(f"   - Tasks: {Task.query.count()}")
         
         print("\n📝 Login credentials:")
         print("   Username: superadmin | Password: password (role: superadmin)")

@@ -64,6 +64,50 @@ class UserUseCase:
                 'error': str(e)
             }
     
+    def get_users_by_department(self, department_id: int) -> Dict:
+        """Get all users from a specific department (for manager)"""
+        try:
+            if not department_id:
+                return {
+                    'success': False,
+                    'error': 'Department ID is required'
+                }
+            
+            # Get department info
+            department = self.department_repository.get_by_id(department_id)
+            if not department:
+                return {
+                    'success': False,
+                    'error': 'Department not found'
+                }
+            
+            # Get all users from this department
+            users = self.user_repository.get_by_department_id(department_id)
+            users_list = []
+            
+            for user in users:
+                user_data = user.to_dict()
+                
+                # Count total bookings for this user
+                total_bookings = self.booking_repository.count_by_user_id(user.id)
+                user_data['total_bookings'] = total_bookings
+                
+                users_list.append(user_data)
+            
+            return {
+                'success': True,
+                'data': {
+                    'department': department.to_dict(),
+                    'users': users_list,
+                    'total_users': len(users_list)
+                }
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
     def create_user(self, username: str, email: str, password: str, 
                     phone: str = None, role: str = 'employee', 
                     department_id: int = None, status: bool = True) -> Dict:
@@ -278,9 +322,16 @@ class UserUseCase:
                 'error': str(e)
             }
     
-    def delete_user(self, user_id: int) -> Dict:
-        """Delete user"""
+    def delete_user(self, user_id: int, current_user_id: int = None) -> Dict:
+        """Delete user - cannot delete own account"""
         try:
+            # Prevent deleting own account
+            if current_user_id and user_id == current_user_id:
+                return {
+                    'success': False,
+                    'error': 'You cannot delete your own account'
+                }
+            
             success = self.user_repository.delete(user_id)
             if success:
                 return {
@@ -290,6 +341,218 @@ class UserUseCase:
             return {
                 'success': False,
                 'error': 'User not found'
+            }
+        except Exception as e:
+            db.session.rollback()
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def create_user_by_manager(self, username: str, email: str, password: str,
+                               phone: str = None, is_active: bool = True,
+                               manager_department_id: int = None) -> Dict:
+        """Create user by manager - role automatically set to employee, department from manager"""
+        try:
+            # Validasi input
+            if not username or not email or not password:
+                return {
+                    'success': False,
+                    'error': 'Username, email, and password are required'
+                }
+            
+            # Validate manager has department
+            if not manager_department_id:
+                return {
+                    'success': False,
+                    'error': 'Manager does not have a department'
+                }
+            
+            # Validate department exists
+            department = self.department_repository.get_by_id(manager_department_id)
+            if not department:
+                return {
+                    'success': False,
+                    'error': 'Department not found'
+                }
+            
+            # Check username uniqueness
+            existing_username = self.user_repository.get_by_username(username)
+            if existing_username:
+                return {
+                    'success': False,
+                    'error': 'Username already taken'
+                }
+            
+            # Check email uniqueness
+            existing_email = self.user_repository.get_by_email(email)
+            if existing_email:
+                return {
+                    'success': False,
+                    'error': 'Email already taken'
+                }
+            
+            # Create user with role=employee and manager's department_id
+            new_user = self.user_repository.create(
+                username=username,
+                email=email,
+                password=password,
+                phone=phone,
+                role='employee',  # Always employee for manager-created users
+                department_id=manager_department_id,  # Manager's department
+                is_active=is_active
+            )
+            
+            user_data = new_user.to_dict()
+            user_data['department_name'] = department.name
+            user_data['total_bookings'] = 0
+            
+            return {
+                'success': True,
+                'data': user_data
+            }
+        except Exception as e:
+            db.session.rollback()
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def update_user_by_manager(self, user_id: int, username: str = None,
+                               email: str = None, password: str = None,
+                               phone: str = None, is_active: bool = None,
+                               manager_department_id: int = None) -> Dict:
+        """Update user by manager - can only update users in their department, cannot change role or department"""
+        try:
+            # Check if user exists
+            existing = self.user_repository.get_by_id(user_id)
+            if not existing:
+                return {
+                    'success': False,
+                    'error': 'User not found'
+                }
+            
+            # Validate manager has department
+            if not manager_department_id:
+                return {
+                    'success': False,
+                    'error': 'Manager does not have a department'
+                }
+            
+            # Check if user belongs to manager's department
+            if existing.department_id != manager_department_id:
+                return {
+                    'success': False,
+                    'error': 'You can only update employees in your own department'
+                }
+            
+            # Check username uniqueness if provided
+            if username is not None:
+                existing_username = self.user_repository.get_by_username(username)
+                if existing_username and existing_username.id != user_id:
+                    return {
+                        'success': False,
+                        'error': 'Username already taken'
+                    }
+            
+            # Check email uniqueness if provided
+            if email is not None:
+                existing_email = self.user_repository.get_by_email(email)
+                if existing_email and existing_email.id != user_id:
+                    return {
+                        'success': False,
+                        'error': 'Email already taken'
+                    }
+            
+            # Update user - role and department_id are NOT changed
+            user = self.user_repository.update(
+                user_id=user_id,
+                username=username,
+                email=email,
+                password=password,
+                phone=phone,
+                role=None,  # Don't change role
+                department_id=None,  # Don't change department
+                is_active=is_active
+            )
+            
+            if user:
+                user_data = user.to_dict()
+                
+                # Add department name
+                department = self.department_repository.get_by_id(user.department_id)
+                user_data['department_name'] = department.name if department else None
+                
+                # Add total bookings
+                total_bookings = self.booking_repository.count_by_user_id(user.id)
+                user_data['total_bookings'] = total_bookings
+                
+                return {
+                    'success': True,
+                    'data': user_data
+                }
+            return {
+                'success': False,
+                'error': 'User not found'
+            }
+        except Exception as e:
+            db.session.rollback()
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def delete_user_by_manager(self, user_id: int, manager_user_id: int,
+                               manager_department_id: int = None) -> Dict:
+        """Delete user by manager - can only delete users in their department, cannot delete themselves"""
+        try:
+            # Check if trying to delete themselves
+            if user_id == manager_user_id:
+                return {
+                    'success': False,
+                    'error': 'You cannot delete your own account'
+                }
+            
+            # Check if user exists
+            existing = self.user_repository.get_by_id(user_id)
+            if not existing:
+                return {
+                    'success': False,
+                    'error': 'User not found'
+                }
+            
+            # Validate manager has department
+            if not manager_department_id:
+                return {
+                    'success': False,
+                    'error': 'Manager does not have a department'
+                }
+            
+            # Check if user belongs to manager's department
+            if existing.department_id != manager_department_id:
+                return {
+                    'success': False,
+                    'error': 'You can only delete employees in your own department'
+                }
+            
+            # Prevent deleting managers or superadmins
+            if existing.role in ['manager', 'superadmin']:
+                return {
+                    'success': False,
+                    'error': 'You cannot delete users with role manager or superadmin'
+                }
+            
+            # Delete user
+            success = self.user_repository.delete(user_id)
+            
+            if success:
+                return {
+                    'success': True,
+                    'message': 'Employee deleted successfully'
+                }
+            return {
+                'success': False,
+                'error': 'Failed to delete employee'
             }
         except Exception as e:
             db.session.rollback()
