@@ -13,6 +13,8 @@ from src.routes.floor_routes import floor_routes
 from src.routes.amenity_routes import amenity_routes
 from src.routes.blackout_routes import blackout_routes
 from src.routes.announcement_routes import announcement_routes
+from src.routes.assignment_routes import assignment_routes
+from src.routes.task_routes import task_routes
 from src.utils.error_handlers import register_error_handlers
 
 # Import all models so SQLAlchemy creates the tables
@@ -48,6 +50,8 @@ def create_app():
     app.register_blueprint(amenity_routes, url_prefix='/api/amenities')
     app.register_blueprint(blackout_routes, url_prefix='/api/blackouts')
     app.register_blueprint(announcement_routes, url_prefix='/api/announcements')
+    app.register_blueprint(assignment_routes, url_prefix='/api/assignments')
+    app.register_blueprint(task_routes, url_prefix='/api/tasks')
     app.register_blueprint(space_routes, url_prefix='/api/spaces')
     app.register_blueprint(booking_bp, url_prefix='/api/bookings')
     app.register_blueprint(stats_bp, url_prefix='/api/stats_employee')

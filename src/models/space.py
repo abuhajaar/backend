@@ -12,9 +12,9 @@ class Space(db.Model):
     type = db.Column(db.String(20), nullable=False)  # hot_desk, private_room, meeting_room
     capacity = db.Column(db.Integer, nullable=False)
     location = db.Column(db.Integer, db.ForeignKey('floors.id'), nullable=False)
-    opening_hours = db.Column(JSON)  # JSON format untuk jam operasional
-    max_duration = db.Column(db.Integer)  # dalam menit
-    status = db.Column(db.String(20), default='available')  # available, booked, in_maintenance
+    opening_hours = db.Column(JSON)  # JSON format for opening hours
+    max_duration = db.Column(db.Integer)  # in minutes
+    status = db.Column(db.String(20), default='available')  # available, in_maintenance
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
