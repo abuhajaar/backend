@@ -10,13 +10,23 @@ class StatsController:
         self.usecase = StatsUseCase()
         self.response = ResponseTemplate()
     
-    def get_employee_stats(self, user_id):
-        """Handler to get employee statistics"""
+    def get_user_stats(self):
+        """Handler to get user statistics (all roles)"""
         try:
-            stats = self.usecase.get_employee_stats(user_id)
-            return self.response.success(
-                data=stats,
-                message="Statistics retrieved successfully"
+            # Get current user from JWT token
+            current_user = request.current_user
+            user_id = current_user.get('user_id')
+            department_id = current_user.get('department_id')
+            
+            result = self.usecase.get_user_stats(user_id, department_id)
+            
+            if result['success']:
+                return self.response.success(
+                    data=result['data'],
+                    message="Statistics retrieved successfully"
+                )
+            return self.response.bad_request(
+                message=result.get('error', 'Failed to retrieve statistics')
             )
             
         except Exception as e:

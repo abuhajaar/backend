@@ -25,7 +25,7 @@ def create_task(assignment_id):
 
 @task_routes.route('/<int:task_id>', methods=['PUT'])
 @token_required
-@role_required(['manager'])
+@role_required(['manager','employee'])
 def update_task(task_id):
     """Route for manager to update task"""
     return task_controller.update_task(task_id)

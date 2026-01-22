@@ -2,10 +2,16 @@ from datetime import datetime, timedelta
 from sqlalchemy import func, and_
 from src.models.booking import Booking
 from src.models.space import Space
+from src.models.user import User
 from src.config.database import db
 
 class StatsRepository:
     """Repository for Statistics operations"""
+    
+    @staticmethod
+    def get_user_by_id(user_id):
+        """Validate user exists"""
+        return User.query.get(user_id)
     
     @staticmethod
     def get_today_bookings_count(user_id):

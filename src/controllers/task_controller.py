@@ -67,11 +67,13 @@ class TaskController:
             )
     
     def update_task(self, task_id):
-        """Handler for manager to update task"""
+        """Handler for manager and employee to update task"""
         try:
             # Get current user from JWT token
             current_user = request.current_user
-            manager_department_id = current_user.get('department_id')
+            user_id = current_user.get('user_id')
+            department_id = current_user.get('department_id')
+            role = current_user.get('role')
             
             # Get request body
             data = request.get_json()
@@ -80,9 +82,11 @@ class TaskController:
                 task_id=task_id,
                 title=data.get('title'),
                 priority=data.get('priority'),
-                user_id=data.get('user_id'),
+                user_id_to_assign=data.get('user_id'),
                 is_done=data.get('is_done'),
-                manager_department_id=manager_department_id
+                current_user_id=user_id,
+                current_user_department_id=department_id,
+                current_user_role=role
             )
             
             if result['success']:

@@ -12,11 +12,12 @@ stats_bp = Blueprint('stats', __name__)
 # Initialize controller
 controller = StatsController()
 
-@stats_bp.route('/<int:user_id>', methods=['GET'])
+@stats_bp.route('', methods=['GET'])
 @token_required
-def get_employee_stats(user_id):
+def get_user_stats():
     """
-    GET /api/stats_employee/:user_id
-    Get statistics for employee by user ID
+    GET /api/stats_employee
+    Get statistics for current user (all roles)
+    Includes: announcements, weekly booking hours, favorite space, and todo list
     """
-    return controller.get_employee_stats(user_id)
+    return controller.get_user_stats()

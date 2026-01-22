@@ -54,7 +54,7 @@ def create_app():
     app.register_blueprint(task_routes, url_prefix='/api/tasks')
     app.register_blueprint(space_routes, url_prefix='/api/spaces')
     app.register_blueprint(booking_bp, url_prefix='/api/bookings')
-    app.register_blueprint(stats_bp, url_prefix='/api/stats_employee')
+    app.register_blueprint(stats_bp, url_prefix='/api/stats')
     
     # Create tables
     with app.app_context():

@@ -133,8 +133,9 @@ class TaskUseCase:
             return {'success': False, 'error': str(e)}
     
     def update_task(self, task_id: int, title: str, priority: str, 
-                   user_id: int, is_done: bool, manager_department_id: int) -> Dict:
-        """Update task with validations"""
+                   user_id_to_assign: int, is_done: bool, current_user_id: int,
+                   current_user_department_id: int, current_user_role: str) -> Dict:
+        """Update task with validations (manager can update all fields, employee can only update is_done)"""
         try:
             # Get existing task
             task = self.task_repository.get_by_id(task_id)
@@ -146,36 +147,54 @@ class TaskUseCase:
             if not assignment:
                 return {'success': False, 'error': 'Assignment not found'}
             
-            # Manager can only update tasks from their department
-            if assignment.department_id != manager_department_id:
-                return {'success': False, 'error': 'You can only update tasks from your department'}
-            
-            # Build update data
-            update_data = {}
-            
-            if title is not None:
-                if not title.strip():
-                    return {'success': False, 'error': 'Title cannot be empty'}
-                update_data['title'] = title.strip()
-            
-            if priority is not None:
-                if priority not in ['low', 'medium', 'high']:
-                    return {'success': False, 'error': 'Priority must be low, medium, or high'}
-                update_data['priority'] = priority
-            
-            if user_id is not None:
-                # Validate user exists and is in the same department
-                user = self.user_repository.get_by_id(user_id)
-                if not user:
-                    return {'success': False, 'error': 'User not found'}
+            # Role-based authorization
+            if current_user_role == 'employee':
+                # Employee can only update their own tasks and only the is_done field
+                if task.user_id != current_user_id:
+                    return {'success': False, 'error': 'You can only update tasks assigned to you'}
                 
-                if user.department_id != manager_department_id:
-                    return {'success': False, 'error': 'You can only assign tasks to users in your department'}
+                # Employee can only update is_done field
+                if title is not None or priority is not None or user_id_to_assign is not None:
+                    return {'success': False, 'error': 'Employees can only update task completion status (is_done)'}
                 
-                update_data['user_id'] = user_id
-            
-            if is_done is not None:
-                update_data['is_done'] = is_done
+                update_data = {}
+                if is_done is not None:
+                    update_data['is_done'] = is_done
+                    
+            elif current_user_role == 'manager':
+                # Manager can only update tasks from their department
+                if assignment.department_id != current_user_department_id:
+                    return {'success': False, 'error': 'You can only update tasks from your department'}
+                
+                # Build update data - manager can update all fields
+                update_data = {}
+                
+                if title is not None:
+                    if not title.strip():
+                        return {'success': False, 'error': 'Title cannot be empty'}
+                    update_data['title'] = title.strip()
+                
+                if priority is not None:
+                    if priority not in ['low', 'medium', 'high']:
+                        return {'success': False, 'error': 'Priority must be low, medium, or high'}
+                    update_data['priority'] = priority
+                
+                if user_id_to_assign is not None:
+                    # Validate user exists and is in the same department
+                    user = self.user_repository.get_by_id(user_id_to_assign)
+                    if not user:
+                        return {'success': False, 'error': 'User not found'}
+                    
+                    if user.department_id != current_user_department_id:
+                        return {'success': False, 'error': 'You can only assign tasks to users in your department'}
+                    
+                    update_data['user_id'] = user_id_to_assign
+                
+                if is_done is not None:
+                    update_data['is_done'] = is_done
+            else:
+                # Superadmin or other roles
+                return {'success': False, 'error': 'Unauthorized to update tasks'}
             
             # Update task
             updated_task = self.task_repository.update(task_id, update_data)
