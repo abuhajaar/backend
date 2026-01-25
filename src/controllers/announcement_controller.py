@@ -51,6 +51,11 @@ class AnnouncementController:
             )
             
             if result['success']:
+                # Broadcast to WebSocket clients
+                from src.config.socketio import socketio
+                from src.websocket.announcement_socket import broadcast_announcement_created
+                broadcast_announcement_created(socketio, result['data'])
+                
                 return self.response.created(
                     data=result['data'],
                     message="Announcement created successfully"
@@ -84,6 +89,11 @@ class AnnouncementController:
             )
             
             if result['success']:
+                # Broadcast to WebSocket clients
+                from src.config.socketio import socketio
+                from src.websocket.announcement_socket import broadcast_announcement_updated
+                broadcast_announcement_updated(socketio, result['data'])
+                
                 return self.response.success(
                     data=result['data'],
                     message="Announcement updated successfully"
@@ -104,6 +114,10 @@ class AnnouncementController:
             manager_id = current_user.get('user_id')
             manager_department_id = current_user.get('department_id')
             
+            # Get announcement before deletion to get department_id for broadcast
+            announcement = self.announcement_usecase.get_announcement_by_id(announcement_id)
+            department_id = announcement.get('department_id') if announcement else None
+            
             result = self.announcement_usecase.delete_announcement(
                 announcement_id=announcement_id,
                 manager_id=manager_id,
@@ -111,6 +125,11 @@ class AnnouncementController:
             )
             
             if result['success']:
+                # Broadcast to WebSocket clients
+                from src.config.socketio import socketio
+                from src.websocket.announcement_socket import broadcast_announcement_deleted
+                broadcast_announcement_deleted(socketio, announcement_id, department_id)
+                
                 return self.response.success(
                     data=None,
                     message="Announcement deleted successfully"

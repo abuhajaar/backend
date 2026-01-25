@@ -16,6 +16,8 @@ from src.routes.announcement_routes import announcement_routes
 from src.routes.assignment_routes import assignment_routes
 from src.routes.task_routes import task_routes
 from src.utils.error_handlers import register_error_handlers
+from src.config.socketio import init_socketio
+from src.websocket.announcement_socket import AnnouncementNamespace
 
 # Import all models so SQLAlchemy creates the tables
 from src.models.user import User
@@ -37,6 +39,12 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     CORS(app)
+    
+    # Initialize SocketIO
+    socketio = init_socketio(app)
+    
+    # Register WebSocket namespaces
+    socketio.on_namespace(AnnouncementNamespace('/announcements'))
     
     # Register error handlers
     register_error_handlers(app)
@@ -60,4 +68,4 @@ def create_app():
     with app.app_context():
         db.create_all()
     
-    return app
+    return app, socketio

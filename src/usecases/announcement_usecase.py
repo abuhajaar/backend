@@ -11,6 +11,24 @@ class AnnouncementUseCase:
         self.user_repository = UserRepository()
         self.department_repository = DepartmentRepository()
     
+    def get_announcement_by_id(self, announcement_id: int) -> Dict:
+        """Get single announcement by ID"""
+        try:
+            announcement = self.announcement_repository.get_by_id(announcement_id)
+            if not announcement:
+                return None
+            
+            return {
+                'id': announcement.id,
+                'title': announcement.title,
+                'description': announcement.description,
+                'created_by': announcement.created_by,
+                'department_id': announcement.department_id,
+                'created_at': announcement.created_at.isoformat() if announcement.created_at else None
+            }
+        except Exception:
+            return None
+    
     def get_announcements_for_manager(self, manager_department_id: int) -> Dict:
         """Get announcements for manager (company-wide + department-specific)"""
         try:
