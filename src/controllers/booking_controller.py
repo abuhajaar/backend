@@ -3,6 +3,8 @@ from src.usecases.booking_usecase import BookingUseCase
 from src.utils.response_template import ResponseTemplate
 from src.config.socketio import socketio
 from src.websocket.booking_socket import broadcast_booking_created, broadcast_booking_updated, broadcast_booking_deleted
+from src.websocket.space_socket import broadcast_space_availability_changed
+from datetime import datetime
 
 class BookingController:
     """Controller to handle Booking operations"""
@@ -32,8 +34,21 @@ class BookingController:
                 end_at_str=data['end_at']
             )
             
-            # Broadcast WebSocket event
+            # Broadcast WebSocket event to bookings namespace
             broadcast_booking_created(socketio, booking)
+            
+            # Broadcast space availability change to spaces namespace
+            start_dt = datetime.fromisoformat(booking['start_at'])
+            end_dt = datetime.fromisoformat(booking['end_at'])
+            broadcast_space_availability_changed(
+                socketio,
+                space_id=booking['space_id'],
+                date=start_dt.strftime('%Y-%m-%d'),
+                affected_time_range={
+                    'start': start_dt.strftime('%H:%M'),
+                    'end': end_dt.strftime('%H:%M')
+                }
+            )
             
             return self.response.created(
                 data=booking,
@@ -114,8 +129,22 @@ class BookingController:
                 checkin_code=checkin_code
             )
             
-            # Broadcast WebSocket event
+            # Broadcast WebSocket event to bookings namespace
             broadcast_booking_updated(socketio, booking)
+            
+            # Broadcast space availability change if booking is cancelled or checked out
+            if action in ['cancel', 'checkout']:
+                start_dt = datetime.fromisoformat(booking['start_at'])
+                end_dt = datetime.fromisoformat(booking['end_at'])
+                broadcast_space_availability_changed(
+                    socketio,
+                    space_id=booking['space_id'],
+                    date=start_dt.strftime('%Y-%m-%d'),
+                    affected_time_range={
+                        'start': start_dt.strftime('%H:%M'),
+                        'end': end_dt.strftime('%H:%M')
+                    }
+                )
 
             # Response message based on action
             messages = {

@@ -104,3 +104,19 @@ def broadcast_space_deleted(socketio, space_id):
     socketio.emit('deleted', {'id': space_id},
                  namespace='/spaces',
                  room='spaces_updates')
+
+def broadcast_space_availability_changed(socketio, space_id, date, affected_time_range):
+    """
+    Broadcast when space availability changes due to booking/cancellation
+    
+    Args:
+        space_id: ID of the space
+        date: Date of the booking (YYYY-MM-DD string)
+        affected_time_range: dict with 'start' and 'end' times (HH:MM strings)
+    """
+    socketio.emit('availability_changed', {
+        'space_id': space_id,
+        'date': date,
+        'affected_time_range': affected_time_range,
+        'message': 'Space availability has changed'
+    }, namespace='/spaces', room='spaces_updates')
