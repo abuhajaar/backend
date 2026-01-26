@@ -167,6 +167,25 @@ class BookingUseCase:
         bookings = self.repository.get_bookings_by_user(user_id)
         return [booking.to_dict() for booking in bookings]
     
+    def get_department_bookings(self, department_id):
+        """
+        Get all bookings for users in a specific department
+        """
+        # Get all users in the department
+        users = self.user_repository.get_users_by_department(department_id)
+        user_ids = [user.id for user in users]
+        
+        # Get all bookings for these users
+        all_bookings = []
+        for user_id in user_ids:
+            bookings = self.repository.get_bookings_by_user(user_id)
+            all_bookings.extend(bookings)
+        
+        # Sort by created_at descending (newest first)
+        all_bookings.sort(key=lambda x: x.created_at, reverse=True)
+        
+        return [booking.to_dict() for booking in all_bookings]
+    
     def update_booking_status(self, booking_id, action, checkin_code=None):
         """Update booking status (checkin, checkout, cancel)"""
         # Get booking

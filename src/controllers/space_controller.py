@@ -1,6 +1,8 @@
 from flask import jsonify, request
 from src.usecases.space_usecase import SpaceUseCase
 from src.utils.response_template import ResponseTemplate
+from src.config.socketio import socketio
+from src.websocket.space_socket import broadcast_space_created, broadcast_space_updated, broadcast_space_deleted
 
 class SpaceController:
     """Controller to handle Space requests"""
@@ -104,6 +106,9 @@ class SpaceController:
             )
             
             if result['success']:
+                # Broadcast WebSocket event
+                broadcast_space_created(socketio, result['data'])
+                
                 return self.response.created(
                     data=result['data'],
                     message="Space created successfully"
@@ -129,6 +134,9 @@ class SpaceController:
             )
             
             if result['success']:
+                # Broadcast WebSocket event
+                broadcast_space_updated(socketio, result['data'])
+                
                 return self.response.success(
                     data=result['data'],
                     message="Status space updated successfully"
@@ -146,6 +154,9 @@ class SpaceController:
         try:
             result = self.space_usecase.delete_space(space_id)
             if result['success']:
+                # Broadcast WebSocket event
+                broadcast_space_deleted(socketio, space_id)
+                
                 return self.response.success(
                     data=result.get('data'),
                     message="Space deleted successfully"

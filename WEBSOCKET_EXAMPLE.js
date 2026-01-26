@@ -1,8 +1,3 @@
-"""
-Example frontend implementation for WebSocket announcements
-"""
-
-# JavaScript/TypeScript Example
 
 import io from 'socket.io-client';
 

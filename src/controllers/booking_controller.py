@@ -1,6 +1,8 @@
 from flask import request
 from src.usecases.booking_usecase import BookingUseCase
 from src.utils.response_template import ResponseTemplate
+from src.config.socketio import socketio
+from src.websocket.booking_socket import broadcast_booking_created, broadcast_booking_updated, broadcast_booking_deleted
 
 class BookingController:
     """Controller to handle Booking operations"""
@@ -29,6 +31,9 @@ class BookingController:
                 start_at_str=data['start_at'],
                 end_at_str=data['end_at']
             )
+            
+            # Broadcast WebSocket event
+            broadcast_booking_created(socketio, booking)
             
             return self.response.created(
                 data=booking,
@@ -108,6 +113,9 @@ class BookingController:
                 action=action,
                 checkin_code=checkin_code
             )
+            
+            # Broadcast WebSocket event
+            broadcast_booking_updated(socketio, booking)
 
             # Response message based on action
             messages = {

@@ -18,6 +18,8 @@ from src.routes.task_routes import task_routes
 from src.utils.error_handlers import register_error_handlers
 from src.config.socketio import init_socketio
 from src.websocket.announcement_socket import AnnouncementNamespace
+from src.websocket.space_socket import SpaceNamespace
+from src.websocket.booking_socket import BookingNamespace
 
 # Import all models so SQLAlchemy creates the tables
 from src.models.user import User
@@ -45,6 +47,8 @@ def create_app():
     
     # Register WebSocket namespaces
     socketio.on_namespace(AnnouncementNamespace('/announcements'))
+    socketio.on_namespace(SpaceNamespace('/spaces'))
+    socketio.on_namespace(BookingNamespace('/bookings'))
     
     # Register error handlers
     register_error_handlers(app)
