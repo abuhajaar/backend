@@ -4,6 +4,7 @@ from src.repositories.announcement_repository import AnnouncementRepository
 from src.repositories.task_repository import TaskRepository
 from src.repositories.user_repository import UserRepository
 from src.repositories.assignment_repository import AssignmentRepository
+from src.repositories.department_repository import DepartmentRepository
 
 class StatsUseCase:
     """UseCase for business logic Statistics"""
@@ -14,12 +15,13 @@ class StatsUseCase:
         self.task_repository = TaskRepository()
         self.user_repository = UserRepository()
         self.assignment_repository = AssignmentRepository()
+        self.department_repository = DepartmentRepository()
     
-    def get_user_stats(self, user_id: int, department_id: int) -> Dict:
+    def get_user_stats(self, user_id: int, department_id: int, role: str = 'employee') -> Dict:
         """Get statistics for current user (all roles)"""
         try:
-            # 1. Get announcements (department-specific + global)
-            announcements_data = self._get_user_announcements(department_id)
+            # 1. Get announcements (superadmin sees all, others see department-specific + global)
+            announcements_data = self._get_user_announcements(department_id, role)
             
             # 2. Get weekly booking hours
             weekly_hours = self.stats_repository.get_weekly_booking_hours(user_id)
@@ -45,32 +47,53 @@ class StatsUseCase:
                 'error': str(e)
             }
     
-    def _get_user_announcements(self, department_id: int) -> list:
-        """Get announcements for user (department-specific + global)"""
+    def _get_user_announcements(self, department_id: int, role: str = 'employee') -> list:
+        """Get announcements for user (superadmin sees all, others see department-specific + global)"""
         announcements = []
         
-        # Get global announcements (department_id is NULL)
-        global_announcements = self.announcement_repository.get_company_wide()
+        # Superadmin can see ALL announcements
+        if role == 'superadmin':
+            all_announcements = self.announcement_repository.get_all()
+        else:
+            # Get global announcements (department_id is NULL)
+            global_announcements = self.announcement_repository.get_company_wide()
+            
+            # Get department-specific announcements if user has department
+            department_announcements = []
+            if department_id:
+                department_announcements = self.announcement_repository.get_by_department(department_id)
+            
+            # Combine announcements
+            all_announcements = global_announcements + department_announcements
         
-        # Get department-specific announcements if user has department
-        department_announcements = []
-        if department_id:
-            department_announcements = self.announcement_repository.get_by_department(department_id)
-        
-        # Combine and sort by created_at descending
-        all_announcements = global_announcements + department_announcements
+        # Sort by created_at descending
         all_announcements.sort(key=lambda x: x.created_at, reverse=True)
         
-        # Limit to 5 most recent announcements
-        for announcement in all_announcements[:5]:
+        # Superadmin can see more announcements (10), others see 5
+        limit = 10 if role == 'superadmin' else 5
+        
+        # Limit to most recent announcements
+        for announcement in all_announcements[:limit]:
             creator = self.user_repository.get_by_id(announcement.created_by)
-            announcements.append({
+            announcement_data = {
                 'id': announcement.id,
                 'title': announcement.title,
                 'description': announcement.description,
                 'creator_name': creator.username if creator else 'Unknown',
                 'created_at': announcement.created_at.isoformat() if announcement.created_at else None
-            })
+            }
+            
+            # Include department info for superadmin
+            if role == 'superadmin':
+                if announcement.department_id:
+                    department = self.department_repository.get_by_id(announcement.department_id)
+                    announcement_data['department_id'] = announcement.department_id
+                    announcement_data['department_name'] = department.name if department else 'Unknown'
+                else:
+                    announcement_data['department_id'] = None
+                    announcement_data['department_name'] = 'Company Wide'
+            
+            announcements.append(announcement_data)
         
         return announcements
     

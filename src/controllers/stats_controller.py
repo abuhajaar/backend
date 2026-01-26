@@ -17,8 +17,9 @@ class StatsController:
             current_user = request.current_user
             user_id = current_user.get('user_id')
             department_id = current_user.get('department_id')
+            role = current_user.get('role', 'employee')
             
-            result = self.usecase.get_user_stats(user_id, department_id)
+            result = self.usecase.get_user_stats(user_id, department_id, role)
             
             if result['success']:
                 return self.response.success(
