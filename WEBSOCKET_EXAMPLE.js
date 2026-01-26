@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 const token = localStorage.getItem('jwt_token');
 
 // Connect to announcements namespace
-const announcementSocket = io('http://localhost:5000/announcements');
+const announcementSocket = io('http://localhost:5001/announcements');
 
 // Handle connection
 announcementSocket.on('connect', () => {

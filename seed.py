@@ -18,7 +18,7 @@ from src.models.assignment import Assignment
 from src.models.task import Task
 
 def seed_data():
-    app = create_app()
+    app, socketio = create_app()
     
     with app.app_context():
         print("🌱 Starting database seeding...")

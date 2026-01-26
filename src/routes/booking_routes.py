@@ -9,14 +9,20 @@ booking_bp = Blueprint('booking', __name__)
 controller = BookingController()
 
 # User endpoints
-@booking_bp.route('', methods=['POST'])
+@booking_bp.route('', methods=['GET', 'POST'])
 @token_required
-def create_booking():
+def handle_bookings():
     """
-    POST /api/bookings
-    Create new booking (user)
+    GET /api/bookings - Get current user's bookings
+    POST /api/bookings - Create new booking
     """
-    return controller.create_booking()
+    from flask import request
+    if request.method == 'GET':
+        # Get current user from token
+        user = request.current_user
+        return controller.get_user_bookings(user['user_id'])
+    else:  # POST
+        return controller.create_booking()
 
 @booking_bp.route('/user/<int:user_id>', methods=['GET'])
 @token_required

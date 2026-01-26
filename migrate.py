@@ -7,7 +7,7 @@ from src.app import create_app
 from src.config.database import db
 
 def migrate():
-    app = create_app()
+    app, socketio = create_app()
     
     with app.app_context():
         print("🔄 Starting database migration...")

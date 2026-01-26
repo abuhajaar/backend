@@ -38,15 +38,14 @@ class BookingController:
             broadcast_booking_created(socketio, booking)
             
             # Broadcast space availability change to spaces namespace
-            start_dt = datetime.fromisoformat(booking['start_at'])
-            end_dt = datetime.fromisoformat(booking['end_at'])
+            # booking dict has: date, start_time, end_time (from to_dict())
             broadcast_space_availability_changed(
                 socketio,
                 space_id=booking['space_id'],
-                date=start_dt.strftime('%Y-%m-%d'),
+                date=booking['date'],
                 affected_time_range={
-                    'start': start_dt.strftime('%H:%M'),
-                    'end': end_dt.strftime('%H:%M')
+                    'start': booking['start_time'],
+                    'end': booking['end_time']
                 }
             )
             
