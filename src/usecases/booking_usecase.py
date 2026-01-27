@@ -82,9 +82,9 @@ class BookingUseCase:
         # Generate checkin code
         checkin_code = self._generate_checkin_code()
         
-        # Hitung code valid time (15 menit sebelum sampai 15 menit setelah end_at)
-        code_valid_from = start_at - timedelta(minutes=15)
-        code_valid_to = end_at + timedelta(minutes=15)
+        # Hitung code valid time (full day - dari 00:00:00 sampai 23:59:59)
+        code_valid_from = start_at.replace(hour=0, minute=0, second=0, microsecond=0)
+        code_valid_to = end_at.replace(hour=23, minute=59, second=59, microsecond=0)
         
         # Prepare booking data
         booking_data = {
@@ -396,8 +396,9 @@ class BookingUseCase:
             
             # Generate checkin code
             checkin_code = self._generate_checkin_code()
-            code_valid_from = start_dt - timedelta(minutes=15)
-            code_valid_to = end_dt + timedelta(minutes=15)
+            # Code valid for full day (00:00:00 to 23:59:59)
+            code_valid_from = start_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+            code_valid_to = end_dt.replace(hour=23, minute=59, second=59, microsecond=0)
             
             # Create booking
             booking_data = {
@@ -502,6 +503,19 @@ class BookingUseCase:
                         'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'
                     }
             
+            # Calculate code_valid_from and code_valid_to if times changed
+            code_valid_from = None
+            code_valid_to = None
+            
+            # Determine the actual start and end times for code validity calculation
+            actual_start = start_dt if start_dt else booking.start_at
+            actual_end = end_dt if end_dt else booking.end_at
+            
+            # If either time changed, recalculate code validity (full day)
+            if start_dt is not None or end_at is not None:
+                code_valid_from = actual_start.replace(hour=0, minute=0, second=0, microsecond=0)
+                code_valid_to = actual_end.replace(hour=23, minute=59, second=59, microsecond=0)
+            
             # Update booking
             updated_booking = self.repository.update_booking_management(
                 booking_id=booking_id,
@@ -509,7 +523,9 @@ class BookingUseCase:
                 space_id=space_id,
                 start_at=start_dt,
                 end_at=end_dt,
-                status=status
+                status=status,
+                code_valid_from=code_valid_from,
+                code_valid_to=code_valid_to
             )
             
             if updated_booking:

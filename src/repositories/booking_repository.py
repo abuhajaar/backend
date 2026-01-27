@@ -88,7 +88,7 @@ class BookingRepository:
         return Booking.query.filter_by(space_id=space_id).all()
     
     @staticmethod
-    def update_booking_management(booking_id, user_id=None, space_id=None, start_at=None, end_at=None, status=None):
+    def update_booking_management(booking_id, user_id=None, space_id=None, start_at=None, end_at=None, status=None, code_valid_from=None, code_valid_to=None):
         """Update booking (superadmin management)"""
         booking = Booking.query.filter_by(id=booking_id).first()
         
@@ -105,6 +105,10 @@ class BookingRepository:
             booking.end_at = end_at
         if status is not None:
             booking.status = status
+        if code_valid_from is not None:
+            booking.code_valid_from = code_valid_from
+        if code_valid_to is not None:
+            booking.code_valid_to = code_valid_to
         
         db.session.commit()
         db.session.refresh(booking)
