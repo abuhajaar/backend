@@ -82,11 +82,10 @@ class AnnouncementNamespace(Namespace):
                         ann_dict = {
                             'id': ann.id,
                             'title': ann.title,
-                            'content': ann.content,
+                            'description': ann.description,
                             'department_id': ann.department_id,
                             'department_name': ann.department.name if ann.department else 'Company Wide',
                             'created_by': ann.created_by,
-                            'is_active': ann.is_active,
                             'created_at': ann.created_at.isoformat() if ann.created_at else None,
                             'updated_at': ann.updated_at.isoformat() if ann.updated_at else None
                         }
