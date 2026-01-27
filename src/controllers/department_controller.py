@@ -18,11 +18,11 @@ class DepartmentController:
                     data=result['data'],
                     message="Departments retrieved successfully"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve departments')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve departments: {str(e)}"
             )
     
@@ -39,7 +39,7 @@ class DepartmentController:
                 message=result.get('error', f'Department with ID {department_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve department: {str(e)}"
             )
     
@@ -65,7 +65,7 @@ class DepartmentController:
                 message=result.get('error', 'Failed to create department')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create department: {str(e)}"
             )
     
@@ -92,7 +92,7 @@ class DepartmentController:
                 message=result.get('error', 'Failed to update department')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update department: {str(e)}"
             )
     
@@ -109,6 +109,6 @@ class DepartmentController:
                 message=result.get('error', f'Department with ID {department_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete department: {str(e)}"
             )

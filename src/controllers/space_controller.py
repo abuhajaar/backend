@@ -24,7 +24,7 @@ class SpaceController:
                 message=str(e)
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve spaces: {str(e)}"
             )
     
@@ -43,7 +43,7 @@ class SpaceController:
                 message="Space retrieved successfully"
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve space: {str(e)}"
             )
     
@@ -57,11 +57,11 @@ class SpaceController:
                     data=result['data'],
                     message="Spaces retrieved successfully"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve spaces')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve spaces: {str(e)}"
             )
     
@@ -78,7 +78,7 @@ class SpaceController:
                 message=result.get('error', f'Space with ID {space_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve space: {str(e)}"
             )
     
@@ -117,7 +117,7 @@ class SpaceController:
                 message=result.get('error', 'Failed to create space')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create space: {str(e)}"
             )
     
@@ -145,7 +145,7 @@ class SpaceController:
                 message=result.get('error', 'Failed to update space status')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update space status: {str(e)}"
             )
     
@@ -165,6 +165,6 @@ class SpaceController:
                 message=result.get('error', f'Space with ID {space_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete space: {str(e)}"
             )

@@ -18,11 +18,11 @@ class BlackoutController:
                     data=result['data'],
                     message="Blackouts berhasil diambil"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve blackouts')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve blackouts: {str(e)}"
             )
     
@@ -39,7 +39,7 @@ class BlackoutController:
                 message=result.get('error', f'Blackout with ID {blackout_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve blackout: {str(e)}"
             )
     
@@ -71,7 +71,7 @@ class BlackoutController:
                 message=result.get('error', 'Failed to create blackout')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create blackout: {str(e)}"
             )
     
@@ -102,7 +102,7 @@ class BlackoutController:
                 message=result.get('error', 'Failed to update blackout')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update blackout: {str(e)}"
             )
     
@@ -119,6 +119,6 @@ class BlackoutController:
                 message=result.get('error', f'Blackout with ID {blackout_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete blackout: {str(e)}"
             )

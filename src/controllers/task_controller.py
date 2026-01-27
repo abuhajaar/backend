@@ -30,7 +30,7 @@ class TaskController:
                 message=result.get('error', 'Failed to retrieve tasks')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve tasks: {str(e)}"
             )
     
@@ -62,7 +62,7 @@ class TaskController:
                 message=result.get('error', 'Failed to create task')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create task: {str(e)}"
             )
     
@@ -98,7 +98,7 @@ class TaskController:
                 message=result.get('error', 'Failed to update task')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update task: {str(e)}"
             )
     
@@ -123,6 +123,6 @@ class TaskController:
                 message=result.get('error', 'Failed to delete task')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete task: {str(e)}"
             )

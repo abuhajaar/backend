@@ -31,6 +31,6 @@ class StatsController:
             )
             
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve statistics: {str(e)}"
             )

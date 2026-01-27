@@ -18,11 +18,11 @@ class UserController:
                     data=result['data'],
                     message="Users retrieved successfully"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve users')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve users: {str(e)}"
             )
     
@@ -39,7 +39,7 @@ class UserController:
                 message=result.get('error', f'User with ID {user_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve user: {str(e)}"
             )
     
@@ -75,7 +75,7 @@ class UserController:
                 message=result.get('error', 'Failed to create user')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create user: {str(e)}"
             )
     
@@ -112,7 +112,7 @@ class UserController:
                 message=result.get('error', 'Failed to update user')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update user: {str(e)}"
             )
     
@@ -133,7 +133,7 @@ class UserController:
                 message=result.get('error', f'User with ID {user_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete user: {str(e)}"
             )
     
@@ -154,7 +154,7 @@ class UserController:
                 message=result.get('error', 'Failed to retrieve team users')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve team users: {str(e)}"
             )
     
@@ -192,7 +192,7 @@ class UserController:
                 message=result.get('error', 'Failed to create employee')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create employee: {str(e)}"
             )
     
@@ -231,7 +231,7 @@ class UserController:
                 message=result.get('error', 'Failed to update employee')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update employee: {str(e)}"
             )
     
@@ -259,6 +259,6 @@ class UserController:
                 message=result.get('error', 'Failed to delete employee')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete employee: {str(e)}"
             )

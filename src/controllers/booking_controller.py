@@ -59,7 +59,7 @@ class BookingController:
                 message=str(e)
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create booking: {str(e)}"
             )
     
@@ -75,7 +75,7 @@ class BookingController:
         except ValueError as e:
             return self.response.not_found(message=str(e))
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve booking: {str(e)}"
             )
     
@@ -89,7 +89,7 @@ class BookingController:
             )
             
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve bookings: {str(e)}"
             )
     
@@ -103,7 +103,7 @@ class BookingController:
             )
             
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve user bookings: {str(e)}"
             )
     
@@ -133,15 +133,14 @@ class BookingController:
             
             # Broadcast space availability change if booking is cancelled or checked out
             if action in ['cancel', 'checkout']:
-                start_dt = datetime.fromisoformat(booking['start_at'])
-                end_dt = datetime.fromisoformat(booking['end_at'])
+                # booking dict has 'date', 'start_time', 'end_time' from to_dict()
                 broadcast_space_availability_changed(
                     socketio,
                     space_id=booking['space_id'],
-                    date=start_dt.strftime('%Y-%m-%d'),
+                    date=booking['date'],
                     affected_time_range={
-                        'start': start_dt.strftime('%H:%M'),
-                        'end': end_dt.strftime('%H:%M')
+                        'start': booking['start_time'],
+                        'end': booking['end_time']
                     }
                 )
 
@@ -162,7 +161,7 @@ class BookingController:
                 message=str(e)
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update booking status: {str(e)}"
             )
     
@@ -176,11 +175,11 @@ class BookingController:
                     data=result['data'],
                     message="Bookings retrieved successfully"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve bookings')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve bookings: {str(e)}"
             )
     
@@ -197,7 +196,7 @@ class BookingController:
                 message=result.get('error', f'Booking with ID {booking_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve booking: {str(e)}"
             )
     
@@ -229,7 +228,7 @@ class BookingController:
                 message=result.get('error', 'Failed to create booking')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create booking: {str(e)}"
             )
     
@@ -262,7 +261,7 @@ class BookingController:
                 message=result.get('error', 'Failed to update booking')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update booking: {str(e)}"
             )
     
@@ -279,6 +278,6 @@ class BookingController:
                 message=result.get('error', f'Booking with ID {booking_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete booking: {str(e)}"
             )

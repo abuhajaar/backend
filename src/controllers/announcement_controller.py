@@ -26,7 +26,7 @@ class AnnouncementController:
                 message=result.get('error', 'Failed to retrieve announcements')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve announcements: {str(e)}"
             )
     
@@ -64,7 +64,7 @@ class AnnouncementController:
                 message=result.get('error', 'Failed to create announcement')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create announcement: {str(e)}"
             )
     
@@ -102,7 +102,7 @@ class AnnouncementController:
                 message=result.get('error', 'Failed to update announcement')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update announcement: {str(e)}"
             )
     
@@ -138,6 +138,6 @@ class AnnouncementController:
                 message=result.get('error', 'Failed to delete announcement')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete announcement: {str(e)}"
             )

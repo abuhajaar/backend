@@ -18,11 +18,11 @@ class AmenityController:
                     data=result['data'],
                     message="Amenities retrieved successfully"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve amenities')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve amenities: {str(e)}"
             )
     
@@ -39,7 +39,7 @@ class AmenityController:
                 message=result.get('error', f'Amenity with ID {amenity_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve amenity: {str(e)}"
             )
     
@@ -67,7 +67,7 @@ class AmenityController:
                 message=result.get('error', 'Failed to create amenity')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create amenity: {str(e)}"
             )
     
@@ -96,7 +96,7 @@ class AmenityController:
                 message=result.get('error', 'Failed to update amenity')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update amenity: {str(e)}"
             )
     
@@ -113,6 +113,6 @@ class AmenityController:
                 message=result.get('error', f'Amenity with ID {amenity_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete amenity: {str(e)}"
             )

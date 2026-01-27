@@ -18,11 +18,11 @@ class FloorController:
                     data=result['data'],
                     message="Floors retrieved successfully"
                 )
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=result.get('error', 'Failed to retrieve floors')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve floors: {str(e)}"
             )
     
@@ -39,7 +39,7 @@ class FloorController:
                 message=result.get('error', f'Floor with ID {floor_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve floor: {str(e)}"
             )
     
@@ -61,7 +61,7 @@ class FloorController:
                 message=result.get('error', 'Failed to create floor')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create floor: {str(e)}"
             )
     
@@ -83,7 +83,7 @@ class FloorController:
                 message=result.get('error', 'Failed to update floor')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update floor: {str(e)}"
             )
     
@@ -100,6 +100,6 @@ class FloorController:
                 message=result.get('error', f'Floor with ID {floor_id} not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete floor: {str(e)}"
             )

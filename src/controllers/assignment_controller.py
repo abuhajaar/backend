@@ -26,7 +26,7 @@ class AssignmentController:
                 message=result.get('error', 'Failed to retrieve assignments')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve assignments: {str(e)}"
             )
     
@@ -58,7 +58,7 @@ class AssignmentController:
                 message=result.get('error', 'Failed to create assignment')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to create assignment: {str(e)}"
             )
     
@@ -91,7 +91,7 @@ class AssignmentController:
                 message=result.get('error', 'Failed to update assignment')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to update assignment: {str(e)}"
             )
     
@@ -118,6 +118,6 @@ class AssignmentController:
                 message=result.get('error', 'Failed to delete assignment')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to delete assignment: {str(e)}"
             )

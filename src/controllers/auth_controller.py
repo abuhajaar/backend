@@ -28,7 +28,7 @@ class AuthController:
                 message=result.get('error', 'Invalid credentials')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Login failed: {str(e)}"
             )
     
@@ -67,7 +67,7 @@ class AuthController:
                 message=result.get('error', 'Failed to register user')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Registration failed: {str(e)}"
             )
     
@@ -88,6 +88,6 @@ class AuthController:
                 message=result.get('error', 'User not found')
             )
         except Exception as e:
-            return self.response.internal_server_error(
+            return self.response.internal_error(
                 message=f"Failed to retrieve user: {str(e)}"
             )
