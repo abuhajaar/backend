@@ -75,17 +75,24 @@ class AnnouncementNamespace(Namespace):
                 if role == 'superadmin':
                     # Superadmin gets ALL announcements from all departments
                     from src.repositories.announcement_repository import AnnouncementRepository
+                    from src.repositories.user_repository import UserRepository
                     announcement_repo = AnnouncementRepository()
+                    user_repo = UserRepository()
                     all_announcements = announcement_repo.get_all()
                     announcements = []
                     for ann in all_announcements:
+                        # Get creator info
+                        creator = user_repo.get_by_id(ann.created_by)
+                        creator_name = creator.username if creator else "Unknown"
+                        
                         ann_dict = {
                             'id': ann.id,
                             'title': ann.title,
                             'description': ann.description,
                             'department_id': ann.department_id,
                             'department_name': ann.department.name if ann.department else 'Company Wide',
-                            'created_by': ann.created_by,
+                            'creator_id': ann.created_by,
+                            'creator_name': creator_name,
                             'created_at': ann.created_at.isoformat() if ann.created_at else None,
                             'updated_at': ann.updated_at.isoformat() if ann.updated_at else None
                         }
